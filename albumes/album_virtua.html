@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Virtua</title>
+
+<style>
+body {
+    background: #0b0f0b;
+    color: #33ff33;
+    font-family: "Courier New", monospace;
+    margin: 0;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+}
+
+.title {
+    border-bottom: 1px solid #1f5f1f;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+.song {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.cover {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #33ff33;
+    margin-right: 10px;
+}
+
+.song-info {
+    flex: 1;
+}
+
+.progress {
+    height: 5px;
+    background: #1a1a1a;
+    margin-top: 5px;
+}
+
+.bar {
+    height: 100%;
+    width: 0%;
+    background: #33ff33;
+}
+
+button {
+    background: #0b0f0b;
+    color: #33ff33;
+    border: 1px solid #33ff33;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.back {
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="back" onclick="window.location.href='../music.html'">← volver</div>
+
+<h2 class="title">> Virtua</h2>
+
+<div class="song">
+    <button onclick="toggle(this,'../music/virtua/Your_Notebook.mp3')">▶</button>
+    <img class="cover" src="../music/Virtua.jpg">
+    <div class="song-info">
+        Your Notebook
+        <div class="progress"><div class="bar"></div></div>
+    </div>
+</div>
+
+<div class="song">
+    <button onclick="toggle(this,'../music/virtua/tema2.mp3')">▶</button>
+    <img class="cover" src="../music/Virtua.jpg">
+    <div class="song-info">
+        track_02
+        <div class="progress"><div class="bar"></div></div>
+    </div>
+</div>
+
+<div class="song">
+    <button onclick="toggle(this,'../music/virtua/tema3.mp3')">▶</button>
+    <img class="cover" src="../music/Virtua.jpg">
+    <div class="song-info">
+        track_03
+        <div class="progress"><div class="bar"></div></div>
+    </div>
+</div>
+
+</div>
+
+<script>
+const audio = new Audio();
+let currentBtn = null;
+let currentSrc = null;
+
+// autoplay siguiente
+const songs = [
+    "../music/virtua/Your_Notebook.mp3",
+    "../music/virtua/tema2.mp3",
+    "../music/virtua/tema3.mp3"
+];
+
+function toggle(btn, src){
+    if(currentSrc === src){
+        if(audio.paused){
+            audio.play();
+            btn.textContent = "⏸";
+        } else {
+            audio.pause();
+            btn.textContent = "▶";
+        }
+    } else {
+        audio.src = src;
+        audio.play();
+
+        if(currentBtn){
+            currentBtn.textContent = "▶";
+        }
+
+        btn.textContent = "⏸";
+        currentBtn = btn;
+        currentSrc = src;
+    }
+}
+
+// barra
+audio.addEventListener("timeupdate", () => {
+    const percent = (audio.currentTime / audio.duration) * 100;
+    document.querySelectorAll(".song").forEach(song => {
+        const bar = song.querySelector(".bar");
+        if(song.querySelector("button") === currentBtn){
+            bar.style.width = percent + "%";
+        } else {
+            bar.style.width = "0%";
+        }
+    });
+});
+
+// 🔥 AUTOPLAY SIGUIENTE
+audio.addEventListener("ended", () => {
+    let index = songs.indexOf(currentSrc);
+
+    if(index !== -1 && index < songs.length - 1){
+        let nextSrc = songs[index + 1];
+
+        let nextSong = document.querySelectorAll(".song")[index + 1];
+        let nextBtn = nextSong.querySelector("button");
+
+        toggle(nextBtn, nextSrc);
+    }
+});
+</script>
+
+</body>
+</html>

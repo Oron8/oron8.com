@@ -86,10 +86,11 @@ button {
 
 .album {
     width: 100%;
-    aspect-ratio: 1/1;
+    height: 150px;
     background: #1a1a1a;
     border: 1px solid #33ff33;
     cursor: pointer;
+    overflow: hidden;
 }
 
 .album:hover {
@@ -138,9 +139,15 @@ button {
 
 <h2 class="type">> Albums</h2>
 <div class="albums">
-    <div class="album" onclick="go('album1.html')"></div>
-    <div class="album" onclick="go('album2.html')"></div>
-    <div class="album" onclick="go('album3.html')"></div>
+    <div class="album" onclick="go('albumes/album_virtua.html')">
+        <img src="music/Virtua.jpg" style="width:100%;height:100%;object-fit:cover;">
+    </div>
+    <div class="album" onclick="go('album2.html')">
+        <img src="music/album2.jpg" style="width:100%;height:100%;object-fit:cover;">
+    </div>
+    <div class="album" onclick="go('album3.html')">
+        <img src="music/album3.jpg" style="width:100%;height:100%;object-fit:cover;">
+    </div>
 </div>
 
 </div>
