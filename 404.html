@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>404</title>
+<style>
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: #00ff66;
+  font-family: Arial, sans-serif;
+}
+
+/* CRT */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 102, 0.12) 0px,
+    rgba(0, 255, 102, 0.12) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  animation: scanmove 0.12s linear infinite;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at center,
+      rgba(0, 255, 102, 0.08) 0%,
+      rgba(0, 255, 102, 0.03) 35%,
+      rgba(0, 0, 0, 0.75) 100%);
+  pointer-events: none;
+}
+
+@keyframes scanmove {
+  from { transform: translateY(0); }
+  to { transform: translateY(4px); }
+}
+
+.wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 👇 ahora es clickeable */
+.error {
+  font-size: clamp(7rem, 24vw, 20rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  position: relative;
+  color: #00ff66;
+  cursor: pointer;
+
+  text-shadow:
+    0 0 4px rgba(0, 255, 102, 1),
+    0 0 10px rgba(0, 255, 102, 0.95),
+    0 0 18px rgba(0, 255, 102, 0.85),
+    0 0 36px rgba(0, 255, 102, 0.6),
+    0 0 64px rgba(0, 255, 102, 0.35);
+
+  filter: drop-shadow(0 0 18px rgba(0, 255, 102, 0.5));
+  animation: flicker 2.8s infinite;
+}
+
+.error:hover {
+  transform: scale(1.05);
+}
+
+.error:active {
+  transform: scale(0.97);
+}
+
+.error::after {
+  content: "_";
+  display: inline-block;
+  margin-left: 0.04em;
+  animation: blink 0.8s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  2% { opacity: 0.85; }
+  3% { opacity: 1; }
+  7% { opacity: 0.75; }
+  8% { opacity: 1; }
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center,
+    rgba(0,0,0,0) 40%,
+    rgba(0,0,0,0.28) 75%,
+    rgba(0,0,0,0.62) 100%);
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+  <div class="error" onclick="goHome()">404</div>
+</div>
+
+<div class="vignette"></div>
+
+<script>
+function goHome(){
+  window.location.href = "/";
+}
+</script>
+
+</body>
+</html>
