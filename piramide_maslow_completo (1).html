@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏔️ La Pirámide de Maslow</title>
+<!-- PeerJS para el modo en red (LAN/Internet) -->
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800;900&family=Nunito:wght@700;900&display=swap');
+:root{--c1:#F06292;--c2:#FF8A50;--c3:#FFD54F;--c4:#81C784;--c5:#4DD0E1;--gold:#FFD700;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Baloo 2',cursive;background:linear-gradient(145deg,#0f0a1e,#1a0f35,#0a1628);min-height:100vh;color:#fff;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(1px 1px at 8% 18%,#fff,transparent),radial-gradient(1px 1px at 22% 55%,#fff,transparent),
+  radial-gradient(1px 1px at 45% 8%,#fff,transparent),radial-gradient(2px 2px at 68% 35%,rgba(255,255,200,.9),transparent),
+  radial-gradient(1px 1px at 82% 72%,#fff,transparent),radial-gradient(1px 1px at 91% 14%,#fff,transparent),
+  radial-gradient(1px 1px at 35% 88%,#fff,transparent),radial-gradient(2px 2px at 75% 90%,rgba(200,200,255,.8),transparent);}
+.scr{position:relative;z-index:1;display:none;min-height:100vh;}
+.scr.on{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.card{background:rgba(255,255,255,0.97);border-radius:24px;padding:28px 32px;width:100%;max-width:500px;box-shadow:0 16px 50px rgba(0,0,0,.5);color:#222;}
+.card h2{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.4rem;color:#1a1a2e;margin-bottom:20px;text-align:center;}
+.logo-icon{font-size:4.5rem;display:block;text-align:center;animation:bob 3s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(255,215,0,.7));}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.logo-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:clamp(1.8rem,5vw,3rem);background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;text-align:center;}
+.logo-sub{text-align:center;color:#aef;font-weight:700;font-size:.9rem;margin-top:4px;}
+.btn{width:100%;padding:15px;background:linear-gradient(135deg,#FFD700,#FF8C00);color:#1a1a2e;font-family:'Nunito',sans-serif;font-weight:900;font-size:1.15rem;border:none;border-radius:14px;cursor:pointer;box-shadow:0 4px 20px rgba(255,200,0,.45);transition:transform .2s,box-shadow .2s;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,200,0,.55);}
+.btn.sec{background:linear-gradient(135deg,#5C6BC0,#3949AB);color:#fff;box-shadow:0 4px 20px rgba(80,80,200,.35);margin-top:10px;}
+.btn.red{background:linear-gradient(135deg,#EF5350,#C62828);color:#fff;box-shadow:none;margin-top:8px;}
+.btn.grn{background:linear-gradient(135deg,#66BB6A,#2E7D32);color:#fff;box-shadow:0 4px 12px rgba(100,200,100,.3);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-weight:700;font-size:.88rem;color:#555;margin-bottom:5px;}
+.field input{width:100%;padding:12px 14px;border:2px solid #e0e0e0;border-radius:12px;font-family:'Baloo 2',cursive;font-size:1rem;font-weight:600;color:#333;outline:none;transition:border-color .2s;}
+.field input:focus{border-color:#FFB300;}
+.cpicks{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.cpick{width:30px;height:30px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:transform .15s,border-color .15s;flex-shrink:0;}
+.cpick:hover{transform:scale(1.25);}
+.cpick.on{border-color:#111;transform:scale(1.25);}
+.or{text-align:center;color:#bbb;font-size:.85rem;font-weight:700;margin:14px 0;position:relative;}
+.or::before,.or::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:#e0e0e0;}
+.or::before{left:0;}.or::after{right:0;}
+.mode-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.mode-btn{padding:16px 10px;border:3px solid #e0e0e0;border-radius:16px;background:#f9f9f9;cursor:pointer;text-align:center;transition:all .2s;font-family:'Baloo 2',cursive;}
+.mode-btn:hover{border-color:#FFB300;background:#FFF8E1;}
+.mode-btn.on{border-color:#FF8C00;background:#FFF3E0;}
+.mode-btn .mi{font-size:2rem;display:block;margin-bottom:6px;}
+.mode-btn .ml{font-weight:800;font-size:.88rem;color:#333;}
+.mode-btn .ms{font-size:.75rem;color:#888;margin-top:2px;}
+.ps-row{display:flex;align-items:center;gap:8px;background:#f5f5f5;border-radius:12px;padding:8px 12px;margin-bottom:8px;}
+.ps-num{font-weight:800;font-size:.95rem;color:#666;min-width:24px;}
+.ps-row input{flex:1;border:none;background:transparent;font-family:'Baloo 2',cursive;font-size:.92rem;font-weight:700;color:#333;outline:none;}
+.ps-row input::placeholder{color:#bbb;}
+.cps-wrap{display:flex;gap:5px;}
+.cp{width:24px;height:24px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:transform .15s,border-color .15s;flex-shrink:0;}
+.cp:hover{transform:scale(1.25);}
+.cp.on{border-color:#111;transform:scale(1.25);}
+.num-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.num-row label{font-weight:700;color:#555;font-size:.92rem;}
+.nbs{display:flex;gap:7px;}
+.nb{width:36px;height:36px;border-radius:10px;border:2px solid #ddd;background:#fff;font-size:.95rem;font-weight:800;cursor:pointer;color:#555;transition:all .2s;font-family:'Baloo 2',cursive;}
+.nb.on{background:#FFD700;border-color:#FFD700;color:#1a1a2e;}
+.nb:hover{border-color:#FFD700;}
+.code-big{font-family:'Nunito',sans-serif;font-weight:900;font-size:2.5rem;text-align:center;letter-spacing:8px;color:#FF8C00;background:#FFF8E1;border-radius:16px;padding:14px;border:3px dashed #FFB300;margin:12px 0;cursor:pointer;transition:background .2s;}
+.code-big:hover{background:#FFF3E0;}
+.code-hint{text-align:center;font-size:.78rem;color:#aaa;margin-top:-8px;margin-bottom:8px;}
+.status{text-align:center;font-size:.85rem;padding:10px;border-radius:10px;margin:8px 0;font-weight:700;}
+.status.ok{background:#E8F5E9;color:#2E7D32;}
+.status.err{background:#FFEBEE;color:#C62828;}
+.status.info{background:#E3F2FD;color:#1565C0;}
+.lobby-list{list-style:none;margin:10px 0;}
+.lobby-list li{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:#f5f5f5;margin-bottom:5px;font-weight:700;font-size:.92rem;color:#333;}
+.ldot{width:16px;height:16px;border-radius:50%;border:2px solid rgba(0,0,0,.12);flex-shrink:0;}
+.you-b{font-size:.6rem;background:#4CAF50;color:#fff;border-radius:5px;padding:1px 5px;font-weight:800;margin-left:4px;}
+.host-b{font-size:.6rem;background:#FF8C00;color:#fff;border-radius:5px;padding:1px 5px;font-weight:800;margin-left:4px;}
+/* ── GAME ── */
+#sg{flex-direction:row;align-items:flex-start;justify-content:center;gap:12px;padding:10px;min-height:100vh;}
+.gl{flex:1;max-width:720px;min-width:0;}
+.gr{width:272px;flex-shrink:0;display:flex;flex-direction:column;gap:9px;}
+.bwrap{background:rgba(255,255,255,0.97);border-radius:20px;padding:12px;box-shadow:0 10px 35px rgba(0,0,0,.4);}
+.btitle{text-align:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:.92rem;color:#333;margin-bottom:7px;}
+#bc{width:100%;height:auto;display:block;border-radius:10px;}
+.pcol{background:rgba(255,255,255,0.97);border-radius:18px;padding:13px;box-shadow:0 6px 22px rgba(0,0,0,.3);color:#333;}
+.pcol h3{font-family:'Nunito',sans-serif;font-weight:900;margin-bottom:8px;font-size:.9rem;color:#333;display:flex;align-items:center;gap:5px;}
+.pi{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:10px;margin-bottom:4px;background:#f8f8f8;transition:background .3s;}
+.pi.cur{background:#FFF9C4;box-shadow:0 2px 8px rgba(255,200,0,.3);}
+.ptok{width:28px;height:28px;border-radius:50%;border:3px solid rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.82rem;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);flex-shrink:0;}
+.pinfo{flex:1;min-width:0;}
+.pname{font-weight:700;font-size:.84rem;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ppos{font-size:.72rem;color:#888;}
+.ds{text-align:center;}
+.tl{font-weight:700;font-size:.78rem;color:#666;margin-bottom:1px;}
+.cn{font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;color:#333;margin-bottom:5px;}
+#de{font-size:4rem;line-height:1;margin:5px 0;display:inline-block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.2));}
+#de.spin{animation:droll .55s ease-out;}
+@keyframes droll{0%{transform:rotate(0) scale(1)}20%{transform:rotate(180deg) scale(1.3)}50%{transform:rotate(300deg) scale(.9)}80%{transform:rotate(380deg) scale(1.15)}100%{transform:rotate(360deg) scale(1)}}
+#rollbtn{width:100%;padding:12px;background:linear-gradient(135deg,#66BB6A,#2E7D32);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;border:none;border-radius:12px;cursor:pointer;box-shadow:0 4px 12px rgba(100,200,100,.3);transition:transform .2s;}
+#rollbtn:hover:not(:disabled){transform:translateY(-2px);}
+#rollbtn:disabled{opacity:.4;cursor:not-allowed;}
+#glog{max-height:130px;overflow-y:auto;font-size:.78rem;color:#555;line-height:1.5;}
+.le{padding:3px 0;border-bottom:1px solid #f0f0f0;}
+.le:last-child{border:none;}
+.li{display:flex;align-items:center;gap:7px;padding:3px 0;font-size:.76rem;color:#555;}
+.ld{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+.conn-info{font-size:.72rem;text-align:center;color:#aaa;margin-top:4px;}
+.conn-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;background:#66BB6A;}
+/* Popup */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:900;display:none;}
+.ov.on{display:block;}
+#ep{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:1000;background:#fff;border-radius:24px;padding:28px 32px;max-width:360px;width:92%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);transition:transform .3s cubic-bezier(.34,1.56,.64,1);color:#333;}
+#ep.on{transform:translate(-50%,-50%) scale(1);}
+.ee{font-size:3.5rem;margin-bottom:6px;}
+.et{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.3rem;margin-bottom:5px;color:#222;}
+.ed{font-size:.9rem;color:#555;line-height:1.5;margin-bottom:12px;}
+.ef{font-size:1rem;font-weight:700;margin-bottom:16px;padding:9px 12px;border-radius:10px;}
+.ef.good{background:#E8F5E9;color:#2E7D32;}
+.ef.bad{background:#FFEBEE;color:#C62828;}
+.ef.neu{background:#E3F2FD;color:#1565C0;}
+#eok{padding:12px 36px;background:linear-gradient(135deg,#FFD700,#FF8C00);color:#1a1a2e;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;border:none;border-radius:12px;cursor:pointer;}
+/* Level popup */
+#lv-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:1000;background:#fff;border-radius:26px;padding:28px 32px;max-width:400px;width:92%;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.55);transition:transform .35s cubic-bezier(.34,1.56,.64,1);color:#333;}
+#lv-pop.on{transform:translate(-50%,-50%) scale(1);}
+.lv-icon{font-size:4rem;margin-bottom:6px;display:block;}
+.lv-badge{display:inline-block;padding:4px 16px;border-radius:20px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;color:#fff;margin-bottom:10px;}
+.lv-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.45rem;margin-bottom:10px;color:#1a1a2e;}
+.lv-desc{font-size:.9rem;color:#555;line-height:1.6;margin-bottom:14px;}
+.lv-examples{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:18px;}
+.lv-ex{padding:5px 12px;border-radius:20px;font-size:.8rem;font-weight:700;background:#f0f0f0;color:#444;}
+#lv-ok{padding:13px 40px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1.05rem;cursor:pointer;color:#fff;}
+/* Rules */
+#sr{justify-content:flex-start;padding-top:20px;}
+.rc{background:rgba(255,255,255,0.97);border-radius:22px;padding:26px 28px;width:100%;max-width:600px;color:#333;box-shadow:0 12px 40px rgba(0,0,0,.4);}
+.rc h2{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.4rem;color:#222;margin-bottom:16px;text-align:center;}
+.rb{margin-bottom:15px;}
+.rb h3{font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;color:#333;margin-bottom:6px;}
+.rb p,.rb li{font-size:.87rem;color:#555;line-height:1.55;margin-bottom:3px;}
+.rb ul{padding-left:16px;}
+.lp{display:inline-flex;align-items:center;gap:5px;border-radius:8px;padding:4px 10px;font-size:.8rem;font-weight:700;margin:2px;color:#fff;}
+.sg2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:5px;}
+.si{background:#f8f8f8;border-radius:9px;padding:7px 9px;font-size:.8rem;color:#555;}
+.si strong{display:block;font-weight:800;color:#333;margin-bottom:1px;}
+/* Win */
+#swin{justify-content:center;text-align:center;gap:12px;}
+.we{font-size:5rem;animation:bob 2s ease-in-out infinite;}
+.wt{font-family:'Nunito',sans-serif;font-weight:900;font-size:clamp(2rem,6vw,3.5rem);color:var(--gold);text-shadow:0 4px 20px rgba(255,215,0,.5);}
+.ws{font-size:1rem;color:#aef;max-width:360px;}
+
+/* ══ PANTALLA DE SELECCIÓN DE MODO ══ */
+#smode .card{max-width:540px;}
+.modo-grande{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:4px;}
+.modo-card{border:3px solid #e0e0e0;border-radius:20px;padding:22px 14px;background:#f9f9f9;cursor:pointer;text-align:center;transition:all .22s;font-family:'Baloo 2',cursive;}
+.modo-card:hover{border-color:#FFB300;background:#FFF8E1;transform:translateY(-3px);box-shadow:0 8px 24px rgba(255,160,0,.2);}
+.modo-card.sel{border-color:#FF8C00;background:#FFF3E0;transform:translateY(-3px);box-shadow:0 8px 24px rgba(255,140,0,.25);}
+.modo-card .mci{font-size:3rem;display:block;margin-bottom:10px;}
+.modo-card .mcn{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.05rem;color:#1a1a2e;margin-bottom:6px;}
+.modo-card .mcd{font-size:.8rem;color:#666;line-height:1.4;}
+.modo-card .mcb{display:inline-block;margin-top:8px;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:10px;}
+.mcb.local-b{background:#E8F5E9;color:#2E7D32;}
+.mcb.lan-b{background:#E3F2FD;color:#1565C0;}
+.modo-tip{background:#FFF8E1;border:1.5px solid #FFD54F;border-radius:12px;padding:11px 14px;margin:10px 0 16px;font-size:.82rem;color:#7a5800;font-weight:700;text-align:center;}
+.modo-tip .tip-icon{font-size:1.1rem;margin-right:4px;}
+
+/* ══ PANTALLA LAN LOBBY ══ */
+#slob .card{max-width:500px;}
+
+@media(max-width:820px){#sg{flex-direction:column;align-items:stretch;}.gr{width:100%;}.gl{max-width:none;}}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     PANTALLA 0: SELECCIÓN DE MODO DE JUEGO
+     ════════════════════════════════════════════ -->
+<div id="smode" class="scr on">
+  <span class="logo-icon">🏔️</span>
+  <div class="logo-title">La Pirámide de Maslow</div>
+  <div class="logo-sub">🎲 Juego de Mesa Educativo 🎲</div>
+
+  <div class="card" style="margin-top:18px;">
+    <h2>🎮 ¿Cómo querés jugar?</h2>
+
+    <div class="modo-grande">
+      <!-- MODO LOCAL -->
+      <div class="modo-card" id="mcard-local" onclick="elegirModo('local')">
+        <span class="mci">🖥️</span>
+        <div class="mcn">Modo Local</div>
+        <div class="mcd">
+          Todos juegan en <strong>la misma computadora</strong>.<br>
+          Se turnan para tirar el dado.<br><br>
+          Ideal para jugar juntos en clase.
+        </div>
+        <span class="mcb local-b">✅ Sin internet necesario</span>
+      </div>
+
+      <!-- MODO RED -->
+      <div class="modo-card" id="mcard-lan" onclick="elegirModo('lan')">
+        <span class="mci">🌐</span>
+        <div class="mcn">Modo en Red</div>
+        <div class="mcd">
+          Cada jugador usa <strong>su propia computadora</strong>.<br>
+          Se conectan con un código secreto.<br><br>
+          Ideal para jugar desde distintos lugares.
+        </div>
+        <span class="mcb lan-b">📡 Necesita internet</span>
+      </div>
+    </div>
+
+    <!-- Explicación amigable -->
+    <div class="modo-tip">
+      <span class="tip-icon">💡</span>
+      <strong>¿No sabés cuál elegir?</strong> Si están todos en el mismo salón o en la misma casa, elegí <em>Modo Local</em>. Si cada uno está en su casa, elegí <em>Modo en Red</em>.
+    </div>
+
+    <button class="btn" id="btn-modo" onclick="confirmarModo()" disabled>Continuar →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PANTALLAS MODO LOCAL
+     ════════════════════════════════════════════ -->
+
+<!-- SETUP LOCAL -->
+<div id="sw" class="scr">
+  <span class="logo-icon">🖥️</span>
+  <div class="logo-title" style="font-size:clamp(1.4rem,4vw,2.2rem);">Modo Local</div>
+  <div class="logo-sub">Todos en la misma computadora</div>
+
+  <div class="card" style="margin-top:16px;">
+    <h2>🎮 Configurar Partida</h2>
+    <div class="num-row">
+      <label>Número de jugadores:</label>
+      <div class="nbs" id="nbs">
+        <button class="nb on" onclick="setN(2)">2</button>
+        <button class="nb"    onclick="setN(3)">3</button>
+        <button class="nb"    onclick="setN(4)">4</button>
+      </div>
+    </div>
+    <div id="ps-container"></div>
+    <button class="btn" onclick="goRulesLocal()" style="margin-top:6px;">📖 Ver Reglas y Jugar →</button>
+    <button class="btn sec" onclick="volverModo()">← Volver</button>
+  </div>
+</div>
+
+<!-- REGLAS LOCAL -->
+<div id="sr" class="scr">
+  <div class="rc">
+    <h2>📖 ¿Cómo se juega?</h2>
+    <div class="rb">
+      <h3>🎯 Objetivo</h3>
+      <p>¡Ser el primero en llegar a la cima (casilla 59) de la Pirámide de Maslow!</p>
+    </div>
+    <div class="rb">
+      <h3>🏔️ Los 5 Niveles</h3>
+      <div>
+        <span class="lp" style="background:#F06292">🍞 Necesidades Básicas</span>
+        <span class="lp" style="background:#FF8A50">🏠 Seguridad</span>
+        <span class="lp" style="background:#d4a800">❤️ Social</span>
+        <span class="lp" style="background:#81C784;color:#333">⭐ Estima</span>
+        <span class="lp" style="background:#00ACC1">🌟 Autorrealización</span>
+      </div>
+    </div>
+    <div class="rb">
+      <h3>🎲 Tu turno</h3>
+      <ul>
+        <li>Cuando sea tu turno, presioná <strong>"¡Tirar Dado!"</strong></li>
+        <li>Tu ficha avanza ese número de casillas</li>
+        <li>Si caés en una casilla especial, ¡ocurrirá algo!</li>
+        <li>Al pasar a un nivel nuevo, aprendés de qué trata 📚</li>
+      </ul>
+    </div>
+    <div class="rb">
+      <h3>✨ Casillas Especiales</h3>
+      <div class="sg2">
+        <div class="si"><strong>⬆️ Verde — ¡Avanzás!</strong>Algo bueno pasó.</div>
+        <div class="si"><strong>⬇️ Rojo — ¡Retrocedés!</strong>Algo malo ocurrió.</div>
+        <div class="si"><strong>🎲 Amarillo — ¡Otra vez!</strong>Tirás de nuevo.</div>
+        <div class="si"><strong>⏸️ Azul — ¡Descansás!</strong>Perdés un turno.</div>
+      </div>
+    </div>
+    <button class="btn" onclick="startGameLocal()">🚀 ¡Empezar a Jugar!</button>
+  </div>
+</div>
+
+<!-- GAME (usado por ambos modos) -->
+<div id="sg" class="scr">
+  <div class="gl">
+    <div class="bwrap">
+      <div class="btitle">🏔️ Pirámide de Maslow — ¡llegá a la cima! 🌟</div>
+      <canvas id="bc"></canvas>
+    </div>
+  </div>
+  <div class="gr">
+    <div class="pcol">
+      <h3>👥 Jugadores</h3>
+      <div id="plist"></div>
+      <!-- Solo visible en modo red -->
+      <div class="conn-info" id="connInfo" style="display:none;">
+        <span class="conn-dot" id="connDot"></span>
+        Sala: <strong id="inGameCode">—</strong>
+      </div>
+    </div>
+    <div class="pcol ds">
+      <div class="tl">Turno de:</div>
+      <div class="cn" id="cname">—</div>
+      <div id="de">🎲</div>
+      <button id="rollbtn" onclick="rollDice()">🎲 ¡Tirar Dado!</button>
+    </div>
+    <div class="pcol">
+      <h3>📖 Lo que pasó</h3>
+      <div id="glog"><div class="le">¡Comienza el juego! 🎉</div></div>
+    </div>
+    <div class="pcol">
+      <h3>🗺️ Niveles</h3>
+      <div class="li"><div class="ld" style="background:#F06292"></div>🍞 Básicas (0–22)</div>
+      <div class="li"><div class="ld" style="background:#FF8A50"></div>🏠 Seguridad (23–32)</div>
+      <div class="li"><div class="ld" style="background:#FFD54F"></div>❤️ Social (33–41)</div>
+      <div class="li"><div class="ld" style="background:#81C784"></div>⭐ Estima (42–50)</div>
+      <div class="li"><div class="ld" style="background:#4DD0E1"></div>🌟 Autorrealización (51–59)</div>
+    </div>
+  </div>
+</div>
+
+<!-- WIN -->
+<div id="swin" class="scr">
+  <div id="win-confetti" style="font-size:2.5rem;animation:bob 1.5s ease-in-out infinite alternate;">🎉🎊🎉</div>
+  <div class="we" id="win-emoji">🏆</div>
+  <div class="wt" id="wtitle">¡Ganaste!</div>
+  <div class="ws" id="wsub">¡Llegaste a la cima!</div>
+  <br>
+  <button class="btn" id="win-btn" style="max-width:320px" onclick="resetGame()">🔄 Jugar de Nuevo</button>
+</div>
+
+<!-- Level popup (modo local) -->
+<div class="ov" id="ov-lvl"></div>
+<div id="lv-pop">
+  <div class="lv-icon" id="lv-icon">🍞</div>
+  <div class="lv-badge" id="lv-badge">Nivel 1</div>
+  <div class="lv-title" id="lv-title">Necesidades Básicas</div>
+  <div class="lv-desc"  id="lv-desc">Descripción.</div>
+  <div class="lv-examples" id="lv-examples"></div>
+  <button id="lv-ok" onclick="closeLevelPopup()">¡Entendido! 🚀</button>
+</div>
+
+<!-- Event popup -->
+<div class="ov" id="ov"></div>
+<div id="ep">
+  <div class="ee" id="eemoji">⭐</div>
+  <div class="et" id="etitle">Evento</div>
+  <div class="ed" id="edesc">Descripción.</div>
+  <div class="ef" id="eeffect">Efecto</div>
+  <button id="eok" onclick="closeEvent()">¡Entendido! 👍</button>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PANTALLAS MODO RED (LAN)
+     ════════════════════════════════════════════ -->
+
+<!-- LOBBY RED: pantalla de inicio -->
+<div id="slob" class="scr">
+  <span class="logo-icon">🌐</span>
+  <div class="logo-title" style="font-size:clamp(1.4rem,4vw,2.2rem);">Modo en Red</div>
+  <div class="logo-sub">Cada uno desde su propia computadora</div>
+
+  <div class="card" style="margin-top:16px;">
+    <h2>🎮 ¿Qué querés hacer?</h2>
+
+    <!-- Explicación para los chicos -->
+    <div class="modo-tip" style="margin-bottom:16px;margin-top:0;">
+      <span class="tip-icon">👑</span>
+      <strong>¿Sos el primero en entrar?</strong> Creá una sala y compartí el código con tus compañeros.<br>
+      <span class="tip-icon" style="margin-top:6px;display:inline-block;">🚪</span>
+      <strong>¿Ya tienen un código?</strong> Escribilo abajo y unite.
+    </div>
+
+    <div class="field">
+      <label>Tu nombre</label>
+      <input type="text" id="myName" placeholder="Ej: Valentina" maxlength="14"/>
+    </div>
+    <div class="field">
+      <label>Color de tu ficha</label>
+      <div class="cpicks" id="myColors"></div>
+    </div>
+
+    <button class="btn" onclick="createRoom()">✨ Crear sala nueva (soy el anfitrión)</button>
+
+    <div class="or">o si ya tenés el código...</div>
+
+    <div class="field">
+      <label>Código de sala (te lo manda el anfitrión)</label>
+      <input type="text" id="joinCode" placeholder="Ej: ABC123"
+        style="text-transform:uppercase;letter-spacing:4px;font-size:1.2rem;text-align:center;"/>
+    </div>
+    <button class="btn sec" onclick="joinRoom()">🚪 Unirme a la sala</button>
+
+    <div id="lobbyStatus"></div>
+    <button class="btn red" onclick="volverModo()" style="margin-top:10px;">← Volver al menú</button>
+  </div>
+</div>
+
+<!-- SALA DE ESPERA RED -->
+<div id="swait" class="scr">
+  <div class="card">
+    <h2>⏳ Sala de Espera</h2>
+
+    <p style="text-align:center;color:#666;font-size:.88rem;">
+      📋 Mandá este código a tus amigos para que se unan:
+    </p>
+    <div class="code-big" id="displayCode" onclick="copyCode()" title="Clic para copiar">—</div>
+    <p class="code-hint">👆 Hacé clic en el código para copiarlo</p>
+
+    <div class="modo-tip" style="margin-top:0;">
+      <span class="tip-icon">💬</span>
+      Mandá el código por WhatsApp, por el chat del aula o leélo en voz alta. ¡Tus amigos lo ponen en la pantalla anterior!
+    </div>
+
+    <p style="font-weight:700;color:#555;font-size:.88rem;margin-bottom:8px;">Jugadores conectados:</p>
+    <ul class="lobby-list" id="lobbyList"></ul>
+
+    <div id="hostControls" style="display:none;">
+      <div id="waitStatus" class="status info">Esperando más jugadores…</div>
+      <button class="btn" id="startBtn" onclick="hostStart()" disabled>🚀 ¡Empezar el juego!</button>
+    </div>
+    <div id="guestWait">
+      <div class="status info">⏳ Esperando que el anfitrión inicie el juego…</div>
+    </div>
+
+    <button class="btn red" onclick="leaveRoom()">❌ Abandonar sala</button>
+  </div>
+</div>
+
+<!-- REGLAS RED -->
+<div id="sr-lan" class="scr">
+  <div class="rc">
+    <h2>📖 ¿Cómo se juega en red?</h2>
+    <div class="rb">
+      <h3>🎯 Objetivo</h3>
+      <p>¡Ser el primero en llegar a la cima (casilla 59) de la Pirámide de Maslow!</p>
+    </div>
+    <div class="rb">
+      <h3>🌐 ¿Cómo funciona el modo en red?</h3>
+      <ul>
+        <li>Cada jugador juega desde <strong>su propia computadora o tablet</strong></li>
+        <li>Todos ven el mismo tablero en tiempo real</li>
+        <li>Cuando es tu turno, <strong>solo vos</strong> podés tirar el dado</li>
+        <li>Los demás esperan hasta que les toque</li>
+      </ul>
+    </div>
+    <div class="rb">
+      <h3>🏔️ Los 5 Niveles</h3>
+      <div>
+        <span class="lp" style="background:#F06292">🍞 Necesidades Básicas</span>
+        <span class="lp" style="background:#FF8A50">🏠 Seguridad</span>
+        <span class="lp" style="background:#d4a800">❤️ Social</span>
+        <span class="lp" style="background:#81C784;color:#333">⭐ Estima</span>
+        <span class="lp" style="background:#00ACC1">🌟 Autorrealización</span>
+      </div>
+    </div>
+    <div class="rb">
+      <h3>✨ Casillas Especiales</h3>
+      <div class="sg2">
+        <div class="si"><strong>⬆️ Verde — ¡Avanzás!</strong>Algo bueno pasó.</div>
+        <div class="si"><strong>⬇️ Rojo — ¡Retrocedés!</strong>Algo malo ocurrió.</div>
+        <div class="si"><strong>🎲 Amarillo — ¡Otra vez!</strong>Tirás de nuevo.</div>
+        <div class="si"><strong>⏸️ Azul — ¡Descansás!</strong>Perdés un turno.</div>
+      </div>
+    </div>
+    <button class="btn" onclick="goGameLan()">🎮 ¡Al tablero!</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  CONSTANTES COMPARTIDAS
+// ════════════════════════════════════════════════════════
+const COLORS=['#E53935','#1E88E5','#43A047','#FFB300','#8E24AA','#00ACC1'];
+const DICE=['⚀','⚁','⚂','⚃','⚄','⚅'];
+const TOTAL=60;
+
+const LEVEL_CFG=[
+  {color:'#F06292',dark:'#c2185b',emoji:'🍞',name:'🍞 Básicas'},
+  {color:'#FF8A50',dark:'#e64a19',emoji:'🏠',name:'🏠 Seguridad'},
+  {color:'#FFD54F',dark:'#f57c00',emoji:'❤️',name:'❤️ Social'},
+  {color:'#81C784',dark:'#388e3c',emoji:'⭐',name:'⭐ Estima'},
+  {color:'#4DD0E1',dark:'#00838f',emoji:'🌟',name:'🌟 Autorrealización'},
+];
+
+const BOARD_ROWS=[
+  {n:12,lvl:0},{n:11,lvl:0},{n:10,lvl:1},
+  {n:9,lvl:2},{n:9,lvl:3},{n:9,lvl:4},
+];
+
+const LEVEL_INFO=[
+  {num:'Nivel 1',icon:'🍞',title:'Necesidades Básicas',
+   desc:'¡Estás en la base de la pirámide! Aquí están las cosas más importantes para vivir: comer, beber agua, dormir y respirar. Sin estas cosas nadie puede estar bien.',
+   examples:['🍕 Comida','💧 Agua','😴 Dormir','🌬️ Respirar','🏃 Moverse']},
+  {num:'Nivel 2',icon:'🏠',title:'Seguridad',
+   desc:'¡Subiste un nivel! Aquí necesitamos sentirnos seguros. Tener una casa, estar a salvo de los peligros y saber que mañana todo estará bien.',
+   examples:['🏠 Hogar','👮 Protección','💊 Salud','🏫 Colegio','💰 Dinero']},
+  {num:'Nivel 3',icon:'❤️',title:'Amor y Amistad',
+   desc:'¡Vas muy bien! En este nivel necesitamos a otras personas. Amigos, familia y sentir que pertenecemos a un grupo. ¡Los humanos necesitamos amor!',
+   examples:['👨‍👩‍👧 Familia','👫 Amigos','❤️ Amor','🤝 Compañeros','🐶 Mascotas']},
+  {num:'Nivel 4',icon:'⭐',title:'Estima y Reconocimiento',
+   desc:'¡Casi en la cima! Queremos sentirnos importantes y valorados. Que nos reconozcan cuando hacemos algo bien y tener confianza en nosotros mismos.',
+   examples:['🏆 Logros','👏 Reconocimiento','💪 Confianza','🎖️ Respeto','📚 Aprender']},
+  {num:'Nivel 5 — ¡La cima!',icon:'🌟',title:'Autorrealización',
+   desc:'¡Llegaste a la cima! Aquí podemos ser la mejor versión de nosotros mismos: crear cosas, descubrir talentos y soñar en grande.',
+   examples:['🎨 Creatividad','🚀 Sueños','🌍 Ayudar','🎵 Talentos','💡 Inventar']},
+];
+
+const SPECIALS={
+   3:{emoji:'🍞',title:'¡Encontraste comida!',desc:'Hallaste pan y agua para todo el día.',type:'bonus',val:3},
+   8:{emoji:'💧',title:'¡Agua fresca!',desc:'Bebiste agua limpia y tenés mucha energía.',type:'bonus',val:2},
+  13:{emoji:'😴',title:'¡Dormiste muy mal!',desc:'Tuviste una mala noche y estás cansado.',type:'penalty',val:2},
+  18:{emoji:'🏠',title:'¡Hogar seguro!',desc:'Tenés un lugar cálido y seguro para vivir.',type:'bonus',val:4},
+  22:{emoji:'⚡',title:'¡Apagón!',desc:'Se fue la luz en toda tu casa.',type:'penalty',val:3},
+  27:{emoji:'🚒',title:'¡Incendio cercano!',desc:'Hubo un susto en el vecindario.',type:'penalty',val:4},
+  31:{emoji:'🤝',title:'¡Nuevos amigos!',desc:'Conociste personas amables y divertidas.',type:'bonus',val:3},
+  35:{emoji:'💔',title:'¡Pelea con un amigo!',desc:'Discutiste con alguien y te sentís mal.',type:'penalty',val:3},
+  39:{emoji:'🎂',title:'¡Es tu cumpleaños!',desc:'¡Todos te celebran! Tirás el dado otra vez.',type:'extra_turn',val:0},
+  43:{emoji:'🦸',title:'¡Héroe del día!',desc:'Ayudaste a alguien que lo necesitaba.',type:'bonus',val:4},
+  46:{emoji:'😰',title:'¡Vergüenza!',desc:'Algo salió mal frente a todos.',type:'penalty',val:2},
+  49:{emoji:'🏆',title:'¡Primer puesto!',desc:'¡Ganaste un concurso en el colegio!',type:'bonus',val:3},
+  53:{emoji:'🛌',title:'¡Necesitás descansar!',desc:'Estás muy cansado. Perdés tu próximo turno.',type:'lose_turn',val:0},
+  56:{emoji:'🎨',title:'¡Gran obra de arte!',desc:'Creaste algo hermoso que todos admiran.',type:'bonus',val:2},
+  58:{emoji:'🌟',title:'¡Casi en la cima!',desc:'¡Podés ver el tope! Tirás otra vez.',type:'extra_turn',val:0},
+};
+
+// ════════════════════════════════════════════════════════
+//  ESTADO GLOBAL
+// ════════════════════════════════════════════════════════
+let modoJuego = null; // 'local' o 'lan'
+
+// Estado modo local
+let numP=2;
+let players=[];
+let curTurn=0;
+let busy=false;
+let pendingEv=null;
+let afterLevelCb=null;
+
+// Estado modo LAN
+let myId='', myName='', myColor=COLORS[0], isHost=false, roomCode='';
+let gameState=null; // {players, curTurn, turnOrder, log, status}
+let peer=null, hostConn=null, guestConns=[];
+
+// Board compartido
+let cellPos=[], canvas, ctx;
+
+// ════════════════════════════════════════════════════════
+//  SELECCIÓN DE MODO
+// ════════════════════════════════════════════════════════
+function elegirModo(modo){
+  modoJuego=modo;
+  document.getElementById('mcard-local').classList.toggle('sel', modo==='local');
+  document.getElementById('mcard-lan').classList.toggle('sel', modo==='lan');
+  document.getElementById('btn-modo').disabled=false;
+}
+
+function confirmarModo(){
+  if(!modoJuego) return;
+  if(modoJuego==='local'){
+    setN(2);
+    buildSetup();
+    showS('sw');
+  } else {
+    initLobbyColors();
+    showS('slob');
+  }
+}
+
+function volverModo(){
+  // Limpiar estado LAN si hay
+  if(peer){ try{peer.destroy();}catch(e){} peer=null; }
+  hostConn=null; guestConns=[];
+  gameState=null; pendingEv=null; busy=false;
+  modoJuego=null;
+  document.getElementById('mcard-local').classList.remove('sel');
+  document.getElementById('mcard-lan').classList.remove('sel');
+  document.getElementById('btn-modo').disabled=true;
+  showS('smode');
+}
+
+// ════════════════════════════════════════════════════════
+//  PANTALLAS
+// ════════════════════════════════════════════════════════
+function showS(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+
+// ════════════════════════════════════════════════════════
+//  HELPERS DE TABLERO
+// ════════════════════════════════════════════════════════
+function cellLvl(i){
+  let acc=0;
+  for(let r=0;r<BOARD_ROWS.length;r++){
+    acc+=BOARD_ROWS[r].n;
+    if(i<acc) return BOARD_ROWS[r].lvl;
+  }
+  return 4;
+}
+function cellLvlName(p){
+  if(p>=TOTAL-1) return '🏆 ¡META!';
+  return LEVEL_CFG[cellLvl(p)].name;
+}
+
+// ════════════════════════════════════════════════════════
+//  MODO LOCAL — SETUP
+// ════════════════════════════════════════════════════════
+function setN(n){
+  numP=n;
+  document.querySelectorAll('.nb').forEach((b,i)=>b.classList.toggle('on',i+2===n));
+  buildSetup();
+}
+
+function buildSetup(){
+  const c=document.getElementById('ps-container');
+  if(!c) return;
+  c.innerHTML='';
+  for(let i=0;i<numP;i++){
+    const row=document.createElement('div');
+    row.className='ps-row';
+    row.innerHTML=`<span class="ps-num">J${i+1}</span>
+      <input type="text" id="pn${i}" placeholder="Nombre jugador ${i+1}" maxlength="14"/>
+      <div class="cps-wrap" id="cps${i}"></div>`;
+    c.appendChild(row);
+    const wrap=row.querySelector(`#cps${i}`);
+    COLORS.forEach((col,ci)=>{
+      const b=document.createElement('button');
+      b.className='cp'+(ci===i?' on':'');
+      b.style.background=col;
+      b.dataset.col=col;
+      b.onclick=()=>{wrap.querySelectorAll('.cp').forEach(x=>x.classList.remove('on'));b.classList.add('on');};
+      wrap.appendChild(b);
+    });
+  }
+}
+
+function getColor(i){
+  const s=document.querySelector(`#cps${i} .cp.on`);
+  return s?s.dataset.col:COLORS[i%COLORS.length];
+}
+
+function goRulesLocal(){
+  players=[];
+  for(let i=0;i<numP;i++){
+    const name=(document.getElementById(`pn${i}`)?.value.trim())||`Jugador ${i+1}`;
+    players.push({name, color:getColor(i), pos:0, skipTurn:false});
+  }
+  showS('sr');
+}
+
+function startGameLocal(){
+  curTurn=0; busy=false; pendingEv=null; afterLevelCb=null;
+  document.getElementById('glog').innerHTML='<div class="le">¡Comienza el juego! 🎉</div>';
+  document.getElementById('connInfo').style.display='none';
+  document.getElementById('rollbtn').disabled=false;
+  showS('sg');
+  initBoard();
+  updateUILocal();
+}
+
+function resetGame(){
+  if(modoJuego==='lan'){
+    // En modo LAN, "Jugar de Nuevo" desconecta y vuelve al menú principal
+    leaveRoom();
+  } else {
+    players=[]; curTurn=0; busy=false; numP=2;
+    document.querySelectorAll('.nb').forEach((b,i)=>b.classList.toggle('on',i===0));
+    buildSetup();
+    showS('sw');
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  TABLERO — DIBUJO
+// ════════════════════════════════════════════════════════
+function initBoard(){
+  canvas=document.getElementById('bc');
+  ctx=canvas.getContext('2d');
+  layoutBoard(); drawBoard();
+}
+
+function layoutBoard(){
+  const W=1000, H=880;
+  canvas.width=W; canvas.height=H;
+  cellPos=[];
+  const NROWS=BOARD_ROWS.length;
+  const PAD=20, TOP_W=500;
+  const topY=PAD, botY=H-PAD, totalH=botY-topY;
+  const rowH=totalH/NROWS;
+  const topLX=(W-TOP_W)/2, topRX=topLX+TOP_W;
+  const botLX=PAD, botRX=W-PAD;
+  for(let row=0;row<NROWS;row++){
+    const rowFromTop=NROWS-1-row;
+    const yTop=topY+rowFromTop*rowH, yBot=topY+(rowFromTop+1)*rowH, yCen=(yTop+yBot)/2;
+    const t=(yCen-topY)/totalH;
+    const lCen=topLX+(botLX-topLX)*t, rCen=topRX+(botRX-topRX)*t;
+    const nc=BOARD_ROWS[row].n, lvl=BOARD_ROWS[row].lvl;
+    const slotW=(rCen-lCen)/nc, r=Math.min(slotW,rowH)*0.44;
+    const startX=lCen+slotW/2;
+    const ltr=(row%2===0);
+    for(let col=0;col<nc;col++){
+      const c=ltr?col:(nc-1-col);
+      cellPos.push({cx:startX+c*slotW, cy:yCen, r, lvl});
+    }
+  }
+}
+
+function getTrap(){
+  const W=canvas.width, H=canvas.height;
+  const NROWS=BOARD_ROWS.length, PAD=20, TOP_W=500;
+  const topY=PAD, botY=H-PAD, totalH=botY-topY, rowH=totalH/NROWS;
+  const topLX=(W-TOP_W)/2, topRX=topLX+TOP_W, botLX=PAD, botRX=W-PAD;
+  const edge=t=>({l:topLX+(botLX-topLX)*t, r:topRX+(botRX-topRX)*t});
+  return {W,H,NROWS,topY,botY,totalH,rowH,edge};
+}
+
+function drawBoard(){
+  if(!canvas||!ctx) return;
+  const {W,H}=getTrap();
+  ctx.clearRect(0,0,W,H);
+  const bg=ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#d4e8ff'); bg.addColorStop(1,'#e4f5e8');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  drawPyramid(); drawConnectors();
+  for(let i=0;i<TOTAL;i++) drawCell(i);
+  // Dibujar fichas según modo
+  if(modoJuego==='local') drawPlayersLocal();
+  else if(modoJuego==='lan'&&gameState) drawPlayersLan();
+}
+
+function lighten(hex,a){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgb(${Math.min(255,r+a)},${Math.min(255,g+a)},${Math.min(255,b+a)})`;
+}
+
+function drawPyramid(){
+  const {W,NROWS,topY,botY,totalH,rowH,edge}=getTrap();
+  for(let row=0;row<NROWS;row++){
+    const rf=NROWS-1-row;
+    const yT=topY+rf*rowH, yB=topY+(rf+1)*rowH;
+    const eT=edge((yT-topY)/totalH), eB=edge((yB-topY)/totalH);
+    const lvl=BOARD_ROWS[row].lvl;
+    const grad=ctx.createLinearGradient(W/2,yT,W/2,yB);
+    grad.addColorStop(0,lighten(LEVEL_CFG[lvl].color,40));
+    grad.addColorStop(1,LEVEL_CFG[lvl].color);
+    ctx.save(); ctx.beginPath();
+    ctx.moveTo(eB.l,yB); ctx.lineTo(eB.r,yB); ctx.lineTo(eT.r,yT); ctx.lineTo(eT.l,yT);
+    ctx.closePath(); ctx.fillStyle=grad; ctx.fill(); ctx.restore();
+  }
+  const eT=edge(0), eB=edge(1);
+  ctx.save(); ctx.beginPath();
+  ctx.moveTo(eT.l,topY); ctx.lineTo(eT.r,topY); ctx.lineTo(eB.r,botY); ctx.lineTo(eB.l,botY);
+  ctx.closePath(); ctx.strokeStyle='#111'; ctx.lineWidth=8; ctx.lineJoin='round'; ctx.stroke(); ctx.restore();
+  for(let row=1;row<NROWS;row++){
+    const rf=NROWS-1-row;
+    const yL=topY+(rf+1)*rowH, e=edge((yL-topY)/totalH);
+    const lc=BOARD_ROWS[row].lvl!==BOARD_ROWS[row-1].lvl;
+    ctx.save(); ctx.beginPath(); ctx.moveTo(e.l,yL); ctx.lineTo(e.r,yL);
+    ctx.strokeStyle='#111'; ctx.lineWidth=lc?7:3; ctx.stroke(); ctx.restore();
+  }
+  const lvlLabels=['🍞 Básicas','🏠 Seguridad','❤️ Social','⭐ Estima','🌟 Autorrealización'];
+  const done=new Set();
+  const {totalH:th,topY:ty}=getTrap();
+  for(let row=0;row<NROWS;row++){
+    const lvl=BOARD_ROWS[row].lvl; if(done.has(lvl)) continue; done.add(lvl);
+    const rf=NROWS-1-row, yCen=topY+(rf+0.5)*rowH;
+    const xL=edge((yCen-topY)/totalH).l;
+    ctx.save(); ctx.font='bold 12px Nunito,sans-serif';
+    ctx.fillStyle=LEVEL_CFG[lvl].dark+'ee'; ctx.textAlign='right'; ctx.textBaseline='middle';
+    ctx.fillText(lvlLabels[lvl],xL-7,yCen); ctx.restore();
+  }
+}
+
+function drawConnectors(){
+  ctx.save(); ctx.strokeStyle='rgba(0,0,0,0.13)'; ctx.lineWidth=1.2; ctx.setLineDash([3,4]);
+  for(let i=0;i<TOTAL-1;i++){
+    if(!cellPos[i]||!cellPos[i+1]) continue;
+    ctx.beginPath(); ctx.moveTo(cellPos[i].cx,cellPos[i].cy); ctx.lineTo(cellPos[i+1].cx,cellPos[i+1].cy); ctx.stroke();
+  }
+  ctx.setLineDash([]); ctx.restore();
+}
+
+function drawCell(i){
+  if(!cellPos[i]) return;
+  const {cx,cy,r,lvl}=cellPos[i];
+  const sp=SPECIALS[i], isStart=i===0, isGoal=i===TOTAL-1;
+  const lc=LEVEL_CFG[lvl]?.color||'#ccc';
+  if(sp||isGoal){
+    const gc=isGoal?'#FFD700':sp.type==='bonus'?'#66BB6A':sp.type==='penalty'?'#E53935':sp.type==='extra_turn'?'#FFB300':'#1E88E5';
+    ctx.save(); const gl=ctx.createRadialGradient(cx,cy,r-1,cx,cy,r+7);
+    gl.addColorStop(0,gc+'55'); gl.addColorStop(1,'transparent');
+    ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(cx,cy,r+7,0,Math.PI*2); ctx.fill(); ctx.restore();
+  }
+  ctx.save(); ctx.shadowColor='rgba(0,0,0,0.28)'; ctx.shadowBlur=7; ctx.shadowOffsetY=2;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+  if(isGoal){
+    const g=ctx.createRadialGradient(cx-r*.25,cy-r*.3,0,cx,cy,r);
+    g.addColorStop(0,'#FFF9C4'); g.addColorStop(0.5,'#FFD700'); g.addColorStop(1,'#FF8C00'); ctx.fillStyle=g;
+  }else if(isStart){ ctx.fillStyle='#ffffff';
+  }else if(sp){ ctx.fillStyle={bonus:'#C8E6C9',penalty:'#FFCDD2',extra_turn:'#FFF9C4',lose_turn:'#BBDEFB'}[sp.type];
+  }else{
+    const g=ctx.createRadialGradient(cx-r*.3,cy-r*.3,0,cx,cy,r*1.1);
+    g.addColorStop(0,'rgba(255,255,255,0.92)'); g.addColorStop(1,lc+'55'); ctx.fillStyle=g;
+  }
+  ctx.fill(); ctx.restore();
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+  if(isGoal){ctx.strokeStyle='#FF8C00';ctx.lineWidth=3;}
+  else if(sp){ctx.strokeStyle={bonus:'#2E7D32',penalty:'#C62828',extra_turn:'#F57F17',lose_turn:'#1565C0'}[sp.type];ctx.lineWidth=2.5;}
+  else{ctx.strokeStyle='rgba(0,0,0,0.22)';ctx.lineWidth=1.5;}
+  ctx.stroke();
+  if(sp||isGoal){ctx.beginPath();ctx.arc(cx,cy,r*0.8,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,0.55)';ctx.lineWidth=1;ctx.stroke();}
+  if(!isGoal&&!isStart){
+    const fs=Math.max(7,Math.floor(r*0.36));
+    ctx.font=`800 ${fs}px Nunito,sans-serif`; ctx.fillStyle=sp?'#333':'#666';
+    ctx.textAlign='center'; ctx.textBaseline='top'; ctx.fillText(String(i),cx,cy-r+2);
+  }
+  const efs=Math.max(10,Math.floor(r*0.74));
+  ctx.font=`${efs}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  if(isGoal)       ctx.fillText('🏆',cx,cy+1);
+  else if(isStart) ctx.fillText('🚀',cx,cy+1);
+  else if(sp)      ctx.fillText(sp.emoji,cx,cy+2);
+  else             ctx.fillText(LEVEL_CFG[lvl]?.emoji||'⭐',cx,cy+2);
+}
+
+function drawTokens(playerList){
+  const byPos={};
+  playerList.forEach(p=>{if(!byPos[p.pos])byPos[p.pos]=[];byPos[p.pos].push(p);});
+  for(const [pos,list] of Object.entries(byPos)){
+    const cp=cellPos[+pos]; if(!cp) continue;
+    const {cx,cy,r}=cp, pr=Math.max(8,r*0.31);
+    const offs=[[0,0],[-1,0],[1,0],[0,-1],[0,1]];
+    list.forEach((p,oi)=>{
+      const ox=offs[oi][0]*pr*1.6, oy=offs[oi][1]*pr*1.6;
+      ctx.save(); ctx.beginPath(); ctx.arc(cx+ox,cy+oy,pr+2.5,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.fill(); ctx.restore();
+      ctx.save(); ctx.beginPath(); ctx.arc(cx+ox,cy+oy,pr,0,Math.PI*2);
+      const tg=ctx.createRadialGradient(cx+ox-pr*.3,cy+oy-pr*.3,0,cx+ox,cy+oy,pr);
+      tg.addColorStop(0,'rgba(255,255,255,0.55)'); tg.addColorStop(0.4,p.color); tg.addColorStop(1,p.color+'aa');
+      ctx.fillStyle=tg; ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=5;
+      ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke(); ctx.restore();
+      ctx.font=`900 ${Math.floor(pr)}px Nunito,sans-serif`; ctx.fillStyle='#fff';
+      ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(p.name[0].toUpperCase(),cx+ox,cy+oy);
+    });
+  }
+}
+
+function drawPlayersLocal(){ drawTokens(players); }
+function drawPlayersLan(){ if(gameState&&gameState.players) drawTokens(gameState.players); }
+
+// ════════════════════════════════════════════════════════
+//  MODO LOCAL — UI Y LÓGICA
+// ════════════════════════════════════════════════════════
+function updateUILocal(){
+  const list=document.getElementById('plist');
+  list.innerHTML='';
+  players.forEach((p,i)=>{
+    const isCur=i===curTurn;
+    const d=document.createElement('div');
+    d.className='pi'+(isCur?' cur':'');
+    d.innerHTML=`<div class="ptok" style="background:${p.color}">${p.name[0].toUpperCase()}</div>
+      <div class="pinfo">
+        <div class="pname">${isCur?'▶ ':''}${p.name}</div>
+        <div class="ppos">Casilla ${p.pos} · ${cellLvlName(p.pos)}</div>
+      </div>${isCur?'<span>🎯</span>':''}`;
+    list.appendChild(d);
+  });
+  const cur=players[curTurn];
+  document.getElementById('cname').textContent=cur?cur.name:'—';
+  const btn=document.getElementById('rollbtn');
+  btn.disabled=busy;
+  btn.textContent='🎲 ¡Tirar Dado!';
+}
+
+function addLogLocal(msg){
+  const log=document.getElementById('glog');
+  const d=document.createElement('div');
+  d.className='le'; d.textContent='▸ '+msg;
+  log.prepend(d);
+  while(log.children.length>25) log.lastElementChild.remove();
+}
+
+// ── Level Popup (solo modo local) ──
+function checkLevelChange(oldPos, newPos, cb){
+  const oldLvl=oldPos<=0?-1:cellLvl(oldPos);
+  const newLvl=cellLvl(newPos);
+  if(newLvl>oldLvl){
+    afterLevelCb=cb;
+    const info=LEVEL_INFO[newLvl];
+    const cfg=LEVEL_CFG[newLvl];
+    document.getElementById('lv-icon').textContent=info.icon;
+    const badge=document.getElementById('lv-badge');
+    badge.textContent=info.num; badge.style.background=cfg.color;
+    document.getElementById('lv-title').textContent=info.title;
+    document.getElementById('lv-desc').textContent=info.desc;
+    const exEl=document.getElementById('lv-examples'); exEl.innerHTML='';
+    info.examples.forEach(ex=>{
+      const s=document.createElement('span'); s.className='lv-ex';
+      s.style.background=cfg.color+'33'; s.style.color=cfg.dark; s.textContent=ex; exEl.appendChild(s);
+    });
+    const btn=document.getElementById('lv-ok');
+    btn.style.background=`linear-gradient(135deg,${cfg.color},${cfg.dark})`;
+    document.getElementById('ov-lvl').classList.add('on');
+    document.getElementById('lv-pop').classList.add('on');
+  } else { cb(); }
+}
+
+function closeLevelPopup(){
+  document.getElementById('ov-lvl').classList.remove('on');
+  document.getElementById('lv-pop').classList.remove('on');
+  const cb=afterLevelCb; afterLevelCb=null; if(cb) cb();
+}
+
+// ── Dado (se bifurca según modo) ──
+function rollDice(){
+  if(modoJuego==='local') rollDiceLocal();
+  else rollDiceLan();
+}
+
+function rollDiceLocal(){
+  if(busy) return;
+  const p=players[curTurn];
+  if(p.skipTurn){
+    p.skipTurn=false;
+    addLogLocal(`${p.name} pierde su turno 😴`);
+    nextTurnLocal(); updateUILocal(); return;
+  }
+  busy=true; updateUILocal();
+  const dEl=document.getElementById('de');
+  dEl.classList.add('spin');
+  let ticks=0;
+  const iv=setInterval(()=>{
+    dEl.textContent=DICE[Math.floor(Math.random()*6)];
+    if(++ticks>=14){
+      clearInterval(iv);
+      const result=Math.floor(Math.random()*6)+1;
+      dEl.textContent=DICE[result-1];
+      dEl.classList.remove('spin');
+      setTimeout(()=>processMoveLocal(result),400);
+    }
+  },80);
+}
+
+function processMoveLocal(roll){
+  const p=players[curTurn];
+  const from=p.pos;
+  const to=Math.min(from+roll,TOTAL-1);
+  addLogLocal(`${p.name} sacó ${roll} 🎲 → casilla ${to}`);
+  animateMoveLocal2(p,from,to,()=>{
+    p.pos=to; updateUILocal();
+    if(to===TOTAL-1){ drawBoard(); setTimeout(()=>showWin(curTurn),400); return; }
+    drawBoard();
+    checkLevelChange(from, to, ()=>{
+      const sp=SPECIALS[to];
+      if(sp) showEvent(sp);
+      else   { nextTurnLocal(); busy=false; updateUILocal(); }
+    });
+  });
+}
+
+function animateMoveLocal2(player,from,to,cb){
+  let cur=from;
+  const step=()=>{
+    cur=Math.min(cur+1,to); player.pos=cur; drawBoard();
+    if(cur<to) setTimeout(step,70); else cb();
+  };
+  step();
+}
+
+function nextTurnLocal(){ curTurn=(curTurn+1)%players.length; }
+
+// ── Event Popup (compartido) ──
+function showEvent(sp){
+  pendingEv=sp;
+  document.getElementById('eemoji').textContent=sp.emoji;
+  document.getElementById('etitle').textContent=sp.title;
+  document.getElementById('edesc').textContent=sp.desc;
+  const eff=document.getElementById('eeffect');
+  const good=sp.type==='bonus'||sp.type==='extra_turn';
+  const bad=sp.type==='penalty'||sp.type==='lose_turn';
+  eff.className='ef '+(good?'good':bad?'bad':'neu');
+  if(sp.type==='bonus')        eff.textContent=`⬆️ Avanzás ${sp.val} casillas`;
+  else if(sp.type==='penalty') eff.textContent=`⬇️ Retrocedés ${sp.val} casillas`;
+  else if(sp.type==='lose_turn') eff.textContent='⏸️ Perdés tu próximo turno';
+  else                          eff.textContent='🎲 ¡Tirás el dado otra vez!';
+  document.getElementById('ov').classList.add('on');
+  document.getElementById('ep').classList.add('on');
+}
+
+function closeEvent(){
+  document.getElementById('ov').classList.remove('on');
+  document.getElementById('ep').classList.remove('on');
+  if(modoJuego==='local') closeEventLocal();
+  else closeEventLan();
+}
+
+function closeEventLocal(){
+  const sp=pendingEv; pendingEv=null; if(!sp) return;
+  const p=players[curTurn];
+  if(sp.type==='bonus'){
+    const np=Math.min(p.pos+sp.val,TOTAL-1);
+    addLogLocal(`${p.name} avanza ${sp.val} ⬆️ → casilla ${np}`);
+    const prev=p.pos;
+    animateMoveLocal2(p,p.pos,np,()=>{
+      p.pos=np;
+      if(np===TOTAL-1){ drawBoard(); showWin(curTurn); return; }
+      drawBoard();
+      checkLevelChange(prev,np,()=>{ nextTurnLocal(); busy=false; updateUILocal(); });
+    });
+  } else if(sp.type==='penalty'){
+    const np=Math.max(p.pos-sp.val,0);
+    addLogLocal(`${p.name} retrocede ${sp.val} ⬇️ → casilla ${np}`);
+    animateMoveLocal2(p,p.pos,np,()=>{ p.pos=np; drawBoard(); nextTurnLocal(); busy=false; updateUILocal(); });
+  } else if(sp.type==='lose_turn'){
+    p.skipTurn=true;
+    addLogLocal(`${p.name} pierde su próximo turno 😴`);
+    nextTurnLocal(); busy=false; updateUILocal();
+  } else if(sp.type==='extra_turn'){
+    addLogLocal(`${p.name} ¡tira de nuevo! 🎲`);
+    busy=false; updateUILocal();
+  }
+}
+
+function showWin(idx){
+  const p=players[idx];
+  document.getElementById('win-confetti').textContent='🎉🎊🎉';
+  document.getElementById('win-emoji').textContent='🏆';
+  document.getElementById('wtitle').textContent=`¡${p.name} ganó! 🏆`;
+  document.getElementById('wsub').textContent=`¡${p.name} llegó a la cima de la Pirámide de Maslow! 🌟`;
+  showS('swin');
+}
+
+// ════════════════════════════════════════════════════════
+//  MODO LAN — LOBBY Y CONEXIÓN (PeerJS)
+// ════════════════════════════════════════════════════════
+function initLobbyColors(){
+  const el=document.getElementById('myColors');
+  if(el.children.length>0) return; // ya inicializado
+  COLORS.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.className='cpick'+(i===0?' on':'');
+    b.style.background=c;
+    b.onclick=()=>{
+      el.querySelectorAll('.cpick').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on'); myColor=c;
+    };
+    el.appendChild(b);
+  });
+}
+
+function setStatus(msg,type='info'){
+  const el=document.getElementById('lobbyStatus');
+  if(!el) return;
+  el.innerHTML=`<div class="status ${type}">${msg}</div>`;
+}
+
+function genCode(){
+  const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join('');
+}
+
+function initPeer(id){
+  return new Promise((res,rej)=>{
+    peer=new Peer(id,{debug:0});
+    peer.on('open',res);
+    peer.on('error',rej);
+    setTimeout(()=>rej(new Error('timeout')),8000);
+  });
+}
+
+function broadcast(msg){ guestConns.forEach(c=>{try{c.send(msg);}catch(e){}});}
+function sendHost(msg){ try{if(hostConn)hostConn.send(msg);}catch(e){}}
+
+async function createRoom(){
+  myName=document.getElementById('myName').value.trim()||'Anfitrión';
+  isHost=true;
+  roomCode=genCode();
+  myId='host_'+roomCode;
+  setStatus('⏳ Conectando…','info');
+  try{ await initPeer(myId); }
+  catch(e){ setStatus('❌ Error de conexión. Revisá tu internet.','err'); return; }
+  gameState={
+    players:[{id:myId,name:myName,color:myColor,pos:0,skipTurn:false}],
+    curTurn:0, turnOrder:[myId],
+    log:['¡Sala creada! Esperando jugadores… 🎉']
+  };
+  peer.on('connection',conn=>{
+    conn.on('open',()=>{
+      guestConns.push(conn);
+      conn.on('data',msg=>handleHostMsg(conn,msg));
+      conn.on('close',()=>{
+        guestConns=guestConns.filter(c=>c!==conn);
+        gameState.players=gameState.players.filter(p=>p.id!==conn.peer);
+        gameState.turnOrder=gameState.turnOrder.filter(id=>id!==conn.peer);
+        addLogLan(conn.peer.split('_')[0]+' se desconectó ❌');
+        refreshWaitingRoom();
+        if(document.getElementById('sg').classList.contains('on')){
+          broadcast({type:'STATE',state:gameState});
+          redrawFromState();
+        }
+      });
+    });
+  });
+  showWaitingLan();
+}
+
+function handleHostMsg(conn,msg){
+  if(msg.type==='JOIN'){
+    const p={id:conn.peer,name:msg.name,color:msg.color,pos:0,skipTurn:false};
+    gameState.players.push(p);
+    gameState.turnOrder.push(conn.peer);
+    addLogLan(msg.name+' se unió 👋');
+    conn.send({type:'STATE',state:gameState});
+    broadcast({type:'STATE',state:gameState});
+    refreshWaitingRoom();
+  }
+  if(msg.type==='MOVE'){
+    applyMove(msg);
+    // Broadcast el nuevo estado a todos los guests
+    broadcast({type:'STATE',state:gameState});
+    // El host también actualiza su vista
+    redrawFromState();
+    // Si el estado dice que alguien ganó, el host también ve la pantalla de victoria
+    if(gameState.status==='won'&&gameState.winner){
+      setTimeout(()=>showWinLan(gameState.winner),400);
+    }
+  }
+}
+
+async function joinRoom(){
+  myName=document.getElementById('myName').value.trim()||'Jugador';
+  const code=document.getElementById('joinCode').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(code.length<4){ setStatus('❌ Escribí el código de la sala','err'); return; }
+  roomCode=code; isHost=false;
+  myId='guest_'+Math.random().toString(36).slice(2,8);
+  setStatus('⏳ Conectando con la sala…','info');
+  try{ await initPeer(myId); }
+  catch(e){ setStatus('❌ Error al conectar. Revisá tu internet.','err'); return; }
+  const hostId='host_'+code;
+  const conn=peer.connect(hostId,{reliable:true});
+  hostConn=conn;
+  conn.on('open',()=>{
+    conn.send({type:'JOIN',name:myName,color:myColor});
+    setStatus('✅ ¡Conectado a la sala!','ok');
+    conn.on('data',msg=>handleGuestMsg(msg));
+    conn.on('close',()=>setStatus('❌ Conexión perdida','err'));
+    showWaitingLan();
+  });
+  conn.on('error',()=>setStatus('❌ No se encontró la sala. Revisá el código.','err'));
+  setTimeout(()=>{
+    if(!document.getElementById('swait').classList.contains('on'))
+      setStatus('❌ No se pudo conectar. Verificá el código.','err');
+  },8000);
+}
+
+function handleGuestMsg(msg){
+  if(msg.type==='STATE'){
+    gameState=msg.state;
+    refreshWaitingRoom();
+    // Si el juego acaba de empezar y todavía no estamos en el tablero → ir a reglas
+    if(msg.state.status==='playing'&&!document.getElementById('sg').classList.contains('on')
+      &&!document.getElementById('sr-lan').classList.contains('on'))
+      showS('sr-lan');
+    // Actualizar tablero si ya estamos en él
+    if(document.getElementById('sg').classList.contains('on'))
+      redrawFromState();
+    // Alguien ganó → mostrar pantalla de victoria en TODAS las computadoras
+    if(msg.state.status==='won'&&msg.state.winner){
+      setTimeout(()=>showWinLan(msg.state.winner),400);
+    }
+    syncLogLan();
+  }
+}
+
+function showWaitingLan(){
+  document.getElementById('displayCode').textContent=roomCode;
+  document.getElementById('inGameCode').textContent=roomCode;
+  document.getElementById('hostControls').style.display=isHost?'block':'none';
+  document.getElementById('guestWait').style.display=isHost?'none':'block';
+  showS('swait');
+  refreshWaitingRoom();
+}
+
+function refreshWaitingRoom(){
+  if(!gameState) return;
+  const list=document.getElementById('lobbyList');
+  list.innerHTML='';
+  gameState.players.forEach((p,i)=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<div class="ldot" style="background:${p.color}"></div>
+      ${p.name}
+      ${p.id===myId?'<span class="you-b">TÚ</span>':''}
+      ${i===0?'<span class="host-b">👑 Anfitrión</span>':''}`;
+    list.appendChild(li);
+  });
+  if(isHost){
+    const n=gameState.players.length;
+    const startBtn=document.getElementById('startBtn');
+    const waitSt=document.getElementById('waitStatus');
+    if(n>=2){
+      startBtn.disabled=false;
+      waitSt.textContent=`✅ ${n} jugadores listos. ¡Podés empezar!`;
+      waitSt.className='status ok';
+    }else{
+      startBtn.disabled=true;
+      waitSt.textContent='⏳ Esperando más jugadores… (mínimo 2)';
+      waitSt.className='status info';
+    }
+  }
+}
+
+function copyCode(){
+  navigator.clipboard.writeText(roomCode).then(()=>{
+    const el=document.getElementById('displayCode');
+    const orig=el.textContent;
+    el.textContent='✅ ¡Copiado!';
+    setTimeout(()=>el.textContent=orig,1500);
+  });
+}
+
+function hostStart(){
+  if(!gameState||gameState.players.length<2) return;
+  gameState.status='playing'; gameState.curTurn=0;
+  gameState.log=['¡El juego ha comenzado! 🎉'];
+  broadcast({type:'STATE',state:gameState});
+  showS('sr-lan');
+}
+
+function goGameLan(){
+  document.getElementById('connInfo').style.display='block';
+  showS('sg');
+  initBoard();
+  redrawFromState();
+}
+
+function leaveRoom(){
+  if(peer){ try{peer.destroy();}catch(e){} peer=null; }
+  hostConn=null; guestConns=[];
+  gameState=null; pendingEv=null; busy=false;
+  volverModo();
+}
+
+// ════════════════════════════════════════════════════════
+//  MODO LAN — LOG
+// ════════════════════════════════════════════════════════
+function addLogLan(text){
+  if(!gameState) return;
+  if(!gameState.log) gameState.log=[];
+  gameState.log.push(text);
+  if(gameState.log.length>30) gameState.log.shift();
+  syncLogLan();
+}
+function syncLogLan(){
+  if(!gameState||!gameState.log) return;
+  const el=document.getElementById('glog');
+  el.innerHTML='';
+  [...gameState.log].reverse().slice(0,20).forEach(msg=>{
+    const d=document.createElement('div');
+    d.className='le'; d.textContent='▸ '+msg;
+    el.appendChild(d);
+  });
+}
+
+// ════════════════════════════════════════════════════════
+//  MODO LAN — DADO Y LÓGICA
+// ════════════════════════════════════════════════════════
+function rollDiceLan(){
+  if(busy||!gameState) return;
+  const order=gameState.turnOrder||gameState.players.map(p=>p.id);
+  const curId=order[gameState.curTurn];
+  if(curId!==myId) return;
+  const me=gameState.players.find(p=>p.id===myId);
+  if(me.skipTurn){
+    me.skipTurn=false;
+    addLogLan(me.name+' pierde su turno 😴');
+    advanceTurnLan(); syncStateLan(); return;
+  }
+  busy=true;
+  document.getElementById('rollbtn').disabled=true;
+  const dEl=document.getElementById('de');
+  dEl.classList.add('spin');
+  let ticks=0;
+  const iv=setInterval(()=>{
+    dEl.textContent=DICE[Math.floor(Math.random()*6)];
+    if(++ticks>=14){
+      clearInterval(iv);
+      const result=Math.floor(Math.random()*6)+1;
+      dEl.textContent=DICE[result-1];
+      dEl.classList.remove('spin');
+      setTimeout(()=>processMoveLan(result),400);
+    }
+  },80);
+}
+
+function processMoveLan(roll){
+  const me=gameState.players.find(p=>p.id===myId);
+  const from=me.pos;
+  const to=Math.min(from+roll,TOTAL-1);
+  addLogLan(`${me.name} sacó ${roll} 🎲 → casilla ${to}`);
+  animateMoveLan(me,from,to,()=>{
+    me.pos=to;
+    if(to===TOTAL-1){
+      gameState.status='won'; gameState.winner=me.name;
+      // Sincronizar PRIMERO (para que todos reciban el win antes de que cambie algo)
+      syncStateLan();
+      // Mostrar pantalla de ganador en esta compu
+      setTimeout(()=>showWinLan(me.name),400);
+      busy=false; return;
+    }
+    drawBoard();
+    const sp=SPECIALS[to];
+    if(sp){ syncStateLan(); showEvent(sp); }
+    else  { advanceTurnLan(); syncStateLan(); busy=false; updateDiceBtnLan(); }
+  });
+}
+
+function animateMoveLan(player,from,to,cb){
+  let cur=from;
+  const step=()=>{
+    cur=Math.min(cur+1,to); player.pos=cur; drawBoard();
+    if(cur<to) setTimeout(step,70); else cb();
+  };
+  step();
+}
+
+function syncStateLan(){
+  if(isHost) broadcast({type:'STATE',state:gameState});
+  else       sendHost({type:'MOVE',state:gameState});
+}
+
+function applyMove(msg){ gameState=msg.state; }
+function advanceTurnLan(){ const n=gameState.players.length; gameState.curTurn=(gameState.curTurn+1)%n; }
+
+function closeEventLan(){
+  const sp=pendingEv; pendingEv=null;
+  if(!sp) return;
+  const me=gameState.players.find(p=>p.id===myId);
+  if(sp.type==='bonus'){
+    const np=Math.min(me.pos+sp.val,TOTAL-1);
+    addLogLan(`${me.name} avanza ${sp.val} ⬆️ → casilla ${np}`);
+    animateMoveLan(me,me.pos,np,()=>{
+      me.pos=np;
+      if(np===TOTAL-1){
+        gameState.status='won'; gameState.winner=me.name;
+        syncStateLan();
+        setTimeout(()=>showWinLan(me.name),400);
+        busy=false; return;
+      }
+      drawBoard(); advanceTurnLan(); syncStateLan(); busy=false; updateDiceBtnLan();
+    });
+  }else if(sp.type==='penalty'){
+    const np=Math.max(me.pos-sp.val,0);
+    addLogLan(`${me.name} retrocede ${sp.val} ⬇️ → casilla ${np}`);
+    animateMoveLan(me,me.pos,np,()=>{ me.pos=np; drawBoard(); advanceTurnLan(); syncStateLan(); busy=false; updateDiceBtnLan(); });
+  }else if(sp.type==='lose_turn'){
+    me.skipTurn=true;
+    addLogLan(`${me.name} pierde su próximo turno 😴`);
+    advanceTurnLan(); syncStateLan(); busy=false; updateDiceBtnLan();
+  }else if(sp.type==='extra_turn'){
+    addLogLan(`${me.name} ¡tira de nuevo! 🎲`);
+    syncStateLan(); busy=false; updateDiceBtnLan();
+  }
+}
+
+function showWinLan(name){
+  const isWinner = (name===myName);
+  document.getElementById('wtitle').textContent = isWinner ? `¡Ganaste, ${name}! 🏆` : `¡${name} ganó! 🏆`;
+  document.getElementById('wsub').textContent = isWinner
+    ? `¡Llegaste a la cima de la Pirámide de Maslow! 🌟 ¡Felicitaciones!`
+    : `¡${name} llegó primero a la cima de la Pirámide de Maslow! 🌟`;
+  document.getElementById('win-emoji').textContent = isWinner ? '🏆' : '🥈';
+  document.getElementById('win-confetti').textContent = isWinner ? '🎉🎊🎉' : '👏👏👏';
+  document.getElementById('win-btn').textContent = '🏠 Volver al menú principal';
+  showS('swin');
+}
+
+function updateDiceBtnLan(){
+  if(!gameState) return;
+  const order=gameState.turnOrder||gameState.players.map(p=>p.id);
+  const curId=order[gameState.curTurn];
+  const isMyTurn=curId===myId;
+  const btn=document.getElementById('rollbtn');
+  btn.disabled=!isMyTurn||busy;
+  btn.textContent=isMyTurn?'🎲 ¡Tirar Dado!':'⏳ Turno de otro jugador';
+}
+
+function redrawFromState(){
+  if(!gameState) return;
+  if(!canvas) initBoard();
+  drawBoard();
+  updateSidePanelLan();
+  updateDiceBtnLan();
+  syncLogLan();
+}
+
+function updateSidePanelLan(){
+  if(!gameState) return;
+  const list=document.getElementById('plist');
+  list.innerHTML='';
+  const order=gameState.turnOrder||gameState.players.map(p=>p.id);
+  const curId=order[gameState.curTurn];
+  order.forEach(id=>{
+    const p=gameState.players.find(x=>x.id===id);
+    if(!p) return;
+    const isCur=p.id===curId;
+    const isMe=p.id===myId;
+    const d=document.createElement('div');
+    d.className='pi'+(isCur?' cur':'');
+    d.innerHTML=`
+      <div class="ptok" style="background:${p.color}">${p.name[0].toUpperCase()}</div>
+      <div class="pinfo">
+        <div class="pname">${isCur?'▶ ':''}${p.name}${isMe?' <span class="you-b">TÚ</span>':''}</div>
+        <div class="ppos">Casilla ${p.pos} · ${cellLvlName(p.pos)}</div>
+      </div>${isCur?'<span>🎯</span>':''}`;
+    list.appendChild(d);
+  });
+  const curP=gameState.players.find(x=>x.id===order[gameState.curTurn]);
+  document.getElementById('cname').textContent=curP?curP.name:'—';
+}
+
+// ════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════
+setN(2); buildSetup();
+</script>
+</body>
+</html>
