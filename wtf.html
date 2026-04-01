@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>ORON_8</title>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Windows_98_stacked_logo.svg/1280px-Windows_98_stacked_logo.svg.png">
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Wallpoet&family=Bungee+Shade&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --lime: #b6ff00;
+  --hot: #ff006e;
+  --cyan: #00f0ff;
+  --yellow: #ffe600;
+  --bg: #0a0a0a;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='6' fill='%23b6ff00'/%3E%3Cline x1='16' y1='0' x2='16' y2='11' stroke='%23b6ff00' stroke-width='2'/%3E%3Cline x1='16' y1='21' x2='16' y2='32' stroke='%23b6ff00' stroke-width='2'/%3E%3Cline x1='0' y1='16' x2='11' y2='16' stroke='%23b6ff00' stroke-width='2'/%3E%3Cline x1='21' y1='16' x2='32' y2='16' stroke='%23b6ff00' stroke-width='2'/%3E%3C/svg%3E") 16 16, crosshair;
+}
+
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:9999;
+  opacity:0.6;
+}
+
+.marquee-wrap {
+  background: var(--hot);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 6px 0;
+  border-bottom: 3px solid var(--yellow);
+}
+.marquee-inner {
+  display: inline-block;
+  animation: marquee 18s linear infinite;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #000;
+  letter-spacing: 2px;
+}
+@keyframes marquee { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
+
+.chaos {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.big-title {
+  font-family: 'Bungee Shade', cursive;
+  font-size: clamp(80px, 18vw, 200px);
+  color: var(--lime);
+  position: absolute;
+  top: 40px;
+  left: -10px;
+  line-height: 0.85;
+  z-index: 2;
+  mix-blend-mode: screen;
+  text-shadow: 4px 4px 0 var(--hot);
+  user-select: none;
+  animation: wobble 6s ease-in-out infinite;
+}
+@keyframes wobble {
+  0%,100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1.5deg) skewX(-1deg); }
+}
+.big-title:hover { animation: shake 0.3s steps(2) infinite; }
+@keyframes shake {
+  0% { transform: translate(-3px,2px) rotate(-2deg); }
+  50% { transform: translate(3px,-2px) rotate(2deg); }
+  100% { transform: translate(-1px,1px) rotate(0deg); }
+}
+
+.gif-1 {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  z-index: 10;
+  animation: float1 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px var(--cyan));
+}
+.gif-1 img { width: 180px; image-rendering: pixelated; }
+@keyframes float1 {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(2deg); }
+}
+
+.stripe {
+  position: absolute;
+  top: 260px;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--yellow) 0px,
+    var(--yellow) 16px,
+    #000 16px,
+    #000 32px
+  );
+  z-index: 1;
+  opacity: 0.85;
+  transform: rotate(-1.2deg);
+}
+
+.center-zone {
+  position: relative;
+  z-index: 5;
+  padding: 360px 40px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.pirate-block {
+  display: flex;
+  align-items: flex-end;
+  gap: 28px;
+  position: relative;
+}
+
+.pirate-block img {
+  width: 140px;
+  image-rendering: pixelated;
+  animation: float2 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px var(--hot));
+}
+@keyframes float2 {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.speech-bubble {
+  background: #fff;
+  color: #000;
+  font-family: 'Comic Neue', cursive;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 14px 20px;
+  border: 3px solid #000;
+  border-radius: 16px 16px 16px 0;
+  max-width: 300px;
+  position: relative;
+  line-height: 1.4;
+  box-shadow: 4px 4px 0 var(--hot);
+}
+
+.marquee2-wrap {
+  background: var(--cyan);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 10px 0;
+  border-top: 3px solid #000;
+  border-bottom: 3px solid #000;
+  transform: rotate(0.5deg);
+}
+.marquee2-inner {
+  display: inline-block;
+  animation: marquee2 12s linear infinite;
+  font-family: 'Wallpoet', monospace;
+  font-size: 22px;
+  color: #000;
+  letter-spacing: 6px;
+}
+@keyframes marquee2 { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.floater {
+  position: fixed;
+  pointer-events: none;
+  z-index: 3;
+  animation: drift 12s ease-in-out infinite;
+  font-size: 28px;
+  opacity: 0.15;
+  user-select: none;
+}
+@keyframes drift {
+  0%,100% { transform: translate(0,0) rotate(0deg); }
+  33% { transform: translate(20px,-30px) rotate(15deg); }
+  66% { transform: translate(-15px,20px) rotate(-10deg); }
+}
+
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 0 40px 80px;
+  position: relative;
+  z-index: 5;
+}
+
+.bottom-row img { image-rendering: pixelated; animation: float1 5s ease-in-out infinite; }
+
+.uc {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--yellow);
+  background: #000;
+  border: 2px dashed var(--yellow);
+  padding: 12px 18px;
+  text-align: center;
+  line-height: 2;
+  animation: blink 1s step-end infinite;
+  align-self: center;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.guestbook {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--hot);
+  text-decoration: none;
+  border: 2px solid var(--hot);
+  padding: 10px 14px;
+  display: inline-block;
+  background: #000;
+  box-shadow: 4px 4px 0 var(--hot);
+  transition: all 0.1s;
+  align-self: center;
+  line-height: 2;
+}
+.guestbook:hover {
+  background: var(--hot);
+  color: #000;
+  box-shadow: none;
+  transform: translate(4px,4px);
+}
+
+.counter {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--lime);
+  text-align: center;
+  border: 2px solid var(--lime);
+  padding: 10px 14px;
+  background: #000;
+  line-height: 2;
+  align-self: center;
+}
+.counter span {
+  display: block;
+  font-size: 20px;
+  color: #fff;
+  letter-spacing: 4px;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: var(--lime); }
+
+.bg-diag {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0px,
+    transparent 80px,
+    rgba(182,255,0,0.015) 80px,
+    rgba(182,255,0,0.015) 81px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="bg-diag"></div>
+
+<div class="floater" style="top:15%;left:5%;animation-delay:0s">✦</div>
+<div class="floater" style="top:40%;right:8%;animation-delay:2s;font-size:40px">★</div>
+<div class="floater" style="top:70%;left:12%;animation-delay:4s">◈</div>
+<div class="floater" style="top:25%;right:20%;animation-delay:1s;font-size:20px">⬡</div>
+
+<div class="marquee-wrap">
+  <div class="marquee-inner">
+    ★ BIENVENIDO A MI PAGINA ★ ORON_8 ★ EN CONSTRUCCION ★ NO TOCAR ★ ZONA PELIGROSA ★ BIENVENIDO A MI PAGINA ★ ORON_8 ★ EN CONSTRUCCION ★ NO TOCAR ★ ZONA PELIGROSA ★&nbsp;&nbsp;&nbsp;
+  </div>
+</div>
+
+<div class="chaos">
+
+  <div class="big-title">ORON<br>_8</div>
+
+  <div class="gif-1">
+    <img src="https://giffiles.alphacoders.com/158/158666.gif" alt="">
+  </div>
+
+  <div class="stripe"></div>
+
+  <div class="center-zone">
+
+    <div class="marquee2-wrap">
+      <div class="marquee2-inner">
+        ORON_8 &nbsp;·&nbsp; ORON_8 &nbsp;·&nbsp; ORON_8 &nbsp;·&nbsp; ORON_8 &nbsp;·&nbsp; ORON_8 &nbsp;·&nbsp; ORON_8 &nbsp;·&nbsp; ORON_8 &nbsp;·&nbsp; ORON_8 &nbsp;·&nbsp; ORON_8 &nbsp;·&nbsp; ORON_8 &nbsp;·&nbsp; ORON_8 &nbsp;·&nbsp; ORON_8 &nbsp;·&nbsp;
+      </div>
+    </div>
+
+    <div class="pirate-block">
+      <img src="https://media.tenor.com/2KFvOEKqauIAAAAM/mfc-pirata.gif" alt="pirata">
+      <div class="speech-bubble">
+        hola. estás en mi pagina.<br>
+        no sé por qué.<br>
+        pero me alegra.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-row">
+    <img src="https://media.tenor.com/2KFvOEKqauIAAAAM/mfc-pirata.gif" style="width:90px;transform:scaleX(-1);" alt="">
+
+    <div class="uc">
+      ⚠ BAJO CONSTRUCCION ⚠<br>
+      VUELVE MAS TARDE
+    </div>
+
+    <div class="counter">
+      VISITAS<br>
+      <span id="cnt">000000</span>
+    </div>
+
+    <a class="guestbook" href="#">FIRMAR<br>LIBRO DE<br>VISITAS</a>
+
+    <img src="https://giffiles.alphacoders.com/158/158666.gif" style="width:110px;" alt="">
+  </div>
+
+</div>
+
+<script>
+  const base = 34917;
+  let stored;
+  try { stored = parseInt(localStorage.getItem('vc') || base); } catch(e) { stored = base; }
+  const count = stored + Math.floor(Math.random() * 3);
+  try { localStorage.setItem('vc', count); } catch(e) {}
+  document.getElementById('cnt').textContent = String(count).padStart(6,'0');
+
+  const title = document.querySelector('.big-title');
+  const colors = ['#b6ff00','#ff006e','#00f0ff','#ffe600','#ff4400'];
+  setInterval(() => {
+    if (Math.random() > 0.7) {
+      title.style.color = colors[Math.floor(Math.random()*colors.length)];
+      setTimeout(() => title.style.color = '#b6ff00', 80);
+    }
+  }, 600);
+</script>
+
+</body>
+</html>
