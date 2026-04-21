@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Química · Materia & Vida</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --surface: #0d1117;
+    --card: #111827;
+    --border: rgba(99,179,237,0.15);
+    --cyan: #63b3ed;
+    --green: #68d391;
+    --purple: #b794f4;
+    --orange: #f6ad55;
+    --pink: #fc8181;
+    --yellow: #f6e05e;
+    --text: #e2e8f0;
+    --muted: #718096;
+    --glow-cyan: 0 0 20px rgba(99,179,237,0.4);
+    --glow-green: 0 0 20px rgba(104,211,145,0.4);
+    --glow-purple: 0 0 20px rgba(183,148,244,0.4);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND GRID ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99,179,237,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,179,237,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(7,9,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 56px;
+    overflow-x: auto;
+  }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    transition: color .2s;
+  }
+  nav a:hover { color: var(--cyan); }
+  .nav-logo {
+    color: var(--cyan) !important;
+    font-size: 0.85rem !important;
+    font-weight: 700;
+    margin-right: 1rem;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    z-index: 1;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--cyan);
+    border: 1px solid rgba(99,179,237,0.3);
+    padding: 0.3rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    max-width: 560px;
+    color: var(--muted);
+    font-size: 1.1rem;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+
+  /* Floating atoms */
+  .atom-float {
+    position: absolute;
+    border-radius: 50%;
+    animation: floatBounce linear infinite;
+    opacity: 0.12;
+  }
+
+  @keyframes floatBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(180deg); }
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--cyan);
+    opacity: 0.6;
+  }
+
+  .section-title {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+  }
+
+  .section-title .accent { color: var(--cyan); }
+
+  /* ── CARDS ── */
+  .card-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+    cursor: default;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(99,179,237,0.4);
+    box-shadow: var(--glow-cyan);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--cyan);
+  }
+
+  .card p {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  /* ── PILL TAGS ── */
+  .pill {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+    margin: 0.2rem;
+    border: 1px solid;
+  }
+
+  .pill-cyan { color: var(--cyan); border-color: rgba(99,179,237,0.3); background: rgba(99,179,237,0.06); }
+  .pill-green { color: var(--green); border-color: rgba(104,211,145,0.3); background: rgba(104,211,145,0.06); }
+  .pill-purple { color: var(--purple); border-color: rgba(183,148,244,0.3); background: rgba(183,148,244,0.06); }
+  .pill-orange { color: var(--orange); border-color: rgba(246,173,85,0.3); background: rgba(246,173,85,0.06); }
+  .pill-pink { color: var(--pink); border-color: rgba(252,129,129,0.3); background: rgba(252,129,129,0.06); }
+
+  /* ── MATTER STATES INTERACTIVE ── */
+  .states-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .state-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .state-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all .2s;
+  }
+
+  .state-btn:hover, .state-btn.active {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+  }
+
+  .state-btn .state-name { font-weight: 700; display: block; }
+  .state-btn .state-desc { font-size: 0.8rem; color: var(--muted); }
+  .state-btn.active .state-desc { color: rgba(99,179,237,0.7); }
+
+  #state-canvas-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 1;
+  }
+
+  #state-canvas { width: 100%; height: 100%; display: block; }
+
+  /* ── ENERGY PYRAMID ── */
+  .pyramid-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 2rem;
+  }
+
+  .pyr-level {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #07090f;
+    font-weight: 700;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: filter .2s, transform .2s;
+    text-align: center;
+    padding: 0.4rem 0.5rem;
+    letter-spacing: 0.03em;
+  }
+
+  .pyr-level:hover {
+    filter: brightness(1.25);
+    transform: scaleX(1.02);
+  }
+
+  /* ── BIOM MOLECULES ── */
+  .biomol-tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .tab-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: 0.08em;
+  }
+
+  .tab-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .tab-btn.active { background: var(--cyan); color: #07090f; border-color: var(--cyan); font-weight: 700; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+
+  .mol-diagram svg { width: 100%; height: auto; }
+
+  /* ── SEPARATION METHODS ── */
+  .sep-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .sep-item {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    align-items: center;
+    transition: all .2s;
+  }
+
+  .sep-item:hover {
+    border-color: rgba(104,211,145,0.4);
+    box-shadow: var(--glow-green);
+  }
+
+  .sep-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .sep-vis {
+    height: 40px;
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* ── DENSITY CALCULATOR ── */
+  .calc-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+  }
+
+  .calc-box h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--yellow);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.1em;
+  }
+
+  .calc-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .calc-row label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  .calc-row input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .calc-row input:focus { border-color: var(--yellow); }
+
+  .calc-result {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(246,224,94,0.07);
+    border: 1px solid rgba(246,224,94,0.2);
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 1.3rem;
+    color: var(--yellow);
+    text-align: center;
+  }
+
+  /* ── TEMP CONVERTER ── */
+  .temp-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+  }
+
+  /* ── CHANGES OF STATE DIAGRAM ── */
+  .phase-diagram {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    overflow-x: auto;
+  }
+
+  /* ── FORMULA BOX ── */
+  .formula {
+    font-family: 'Space Mono', monospace;
+    background: rgba(99,179,237,0.08);
+    border: 1px solid rgba(99,179,237,0.2);
+    border-radius: 6px;
+    padding: 0.75rem 1.25rem;
+    color: var(--cyan);
+    font-size: 1.1rem;
+    display: inline-block;
+    margin: 0.5rem 0;
+  }
+
+  /* ── TOOLTIP ── */
+  [data-tip] { position: relative; cursor: help; }
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%; transform: translateX(-50%);
+    background: #1a202c;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.75rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+    z-index: 10;
+  }
+  [data-tip]:hover::after { opacity: 1; }
+
+  /* ── ACCORDION ── */
+  .accordion { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .acc-item { border-bottom: 1px solid var(--border); }
+  .acc-item:last-child { border-bottom: none; }
+  .acc-header {
+    width: 100%;
+    background: var(--card);
+    border: none;
+    color: var(--text);
+    padding: 1rem 1.5rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background .2s;
+  }
+  .acc-header:hover { background: rgba(99,179,237,0.05); }
+  .acc-header .chevron { transition: transform .3s; font-size: 0.8rem; color: var(--muted); }
+  .acc-header.open .chevron { transform: rotate(180deg); }
+  .acc-body {
+    background: var(--surface);
+    padding: 0 1.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s ease, padding .35s;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .acc-body.open { max-height: 400px; padding: 1rem 1.5rem; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 8px rgba(99,179,237,0.3); }
+    50% { box-shadow: 0 0 24px rgba(99,179,237,0.7); }
+  }
+
+  .observe { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .observe.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .states-container, .tab-content.active, .sep-item { grid-template-columns: 1fr; }
+    nav { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">⚗ QUÍMICA</a>
+  <a href="#sec1">Materia</a>
+  <a href="#sec2">Niveles</a>
+  <a href="#sec3">Biomol.</a>
+  <a href="#sec4">Célula</a>
+  <a href="#sec5">Sistemas</a>
+  <a href="#sec6">Estados</a>
+  <a href="#sec7">Separación</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <!-- floating atoms decoration -->
+  <div class="atom-float" style="width:300px;height:300px;background:radial-gradient(circle,var(--cyan),transparent);top:10%;left:-5%;animation-duration:8s;"></div>
+  <div class="atom-float" style="width:200px;height:200px;background:radial-gradient(circle,var(--purple),transparent);bottom:15%;right:-4%;animation-duration:11s;"></div>
+  <div class="atom-float" style="width:150px;height:150px;background:radial-gradient(circle,var(--green),transparent);top:40%;right:10%;animation-duration:6s;"></div>
+
+  <div class="hero-badge">GUÍA DE ESTUDIO · QUÍMICA</div>
+  <h1>Materia &amp; <span>Vida</span></h1>
+  <p>Una guía completa e interactiva sobre los conceptos fundamentales de química: desde el átomo hasta los ecosistemas.</p>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════
+     SEC 1 · DEFINICIONES Y DENSIDAD
+════════════════════════════════════ -->
+<section class="section observe" id="sec1">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Definiciones &amp; <span class="accent">Propiedades</span></h2>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🔬</div>
+      <h3>Química</h3>
+      <p>Ciencia que estudia la materia, su constitución, comportamiento y las leyes que rigen sus propiedades.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚛️</div>
+      <h3>Materia</h3>
+      <p>Todo lo que nos rodea: tiene <strong>masa</strong>, <strong>volumen</strong>, ocupa un lugar en el espacio e impresiona nuestros sentidos.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🧊</div>
+      <h3>Cuerpo</h3>
+      <p>Porción limitada de materia <strong>con forma propia</strong>. Los gases no siempre forman cuerpos.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🧪</div>
+      <h3>Sustancia Simple</h3>
+      <p>Compuesta por átomos iguales. No se descompone en sustancias más simples. Ej: O₂, N₂.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">💧</div>
+      <h3>Sustancia Compuesta</h3>
+      <p>Dos o más elementos distintos. Ej: H₂O, CO₂. Sí puede descomponerse.</p>
+    </div>
+  </div>
+
+  <!-- Propiedades intensivas vs extensivas -->
+  <div style="margin-top:2.5rem; display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+    <div class="card" style="border-color:rgba(99,179,237,0.35);">
+      <h3 style="margin-bottom:0.75rem;">📌 Propiedades Intensivas</h3>
+      <p style="margin-bottom:0.75rem;">No dependen de la <em>cantidad</em> de materia.</p>
+      <div>
+        <span class="pill pill-cyan" data-tip="°C, °F, °K">Temperatura</span>
+        <span class="pill pill-cyan" data-tip="m/V">Densidad</span>
+        <span class="pill pill-cyan" data-tip="Temperatura a la que hierve">Punto de Ebullición</span>
+        <span class="pill pill-cyan" data-tip="Temperatura a la que se funde">Punto de Fusión</span>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(183,148,244,0.35);">
+      <h3 style="color:var(--purple); margin-bottom:0.75rem;">📊 Propiedades Extensivas</h3>
+      <p style="margin-bottom:0.75rem;">Varían según la <em>cantidad</em> de materia.</p>
+      <div>
+        <span class="pill pill-purple">Masa</span>
+        <span class="pill pill-purple">Volumen</span>
+        <span class="pill pill-purple">Peso</span>
+        <span class="pill pill-purple">Longitud</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calculadora de densidad -->
+  <div style="margin-top:3rem; display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start;">
+    <div>
+      <h3 style="margin-bottom:1rem; color:var(--yellow);">🧮 Calculadora de Densidad</h3>
+      <div class="formula">d = m / V</div>
+      <div class="calc-box" style="margin-top:1rem;">
+        <h3>// CALCULA LA DENSIDAD</h3>
+        <div class="calc-row">
+          <label>Masa (g)</label>
+          <input type="number" id="masa" placeholder="ej. 200" oninput="calcDensidad()">
+        </div>
+        <div class="calc-row">
+          <label>Volumen (cm³)</label>
+          <input type="number" id="vol" placeholder="ej. 100" oninput="calcDensidad()">
+        </div>
+        <div class="calc-result" id="dens-result">— g/cm³</div>
+      </div>
+    </div>
+
+    <!-- Conversor de temperatura -->
+    <div>
+      <h3 style="margin-bottom:1rem; color:var(--orange);">🌡️ Conversor de Temperatura</h3>
+      <div class="temp-box">
+        <div class="calc-row">
+          <label style="width:90px;">°Celsius</label>
+          <input type="number" id="temp-c" placeholder="ej. 100" oninput="convertTemp('c')">
+        </div>
+        <div class="calc-row">
+          <label style="width:90px;">°Fahrenheit</label>
+          <input type="number" id="temp-f" placeholder="ej. 212" oninput="convertTemp('f')">
+        </div>
+        <div class="calc-row">
+          <label style="width:90px;">°Kelvin</label>
+          <input type="number" id="temp-k" placeholder="ej. 373" oninput="convertTemp('k')">
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--muted);margin-top:0.5rem;">
+          °F = (°C × 9/5) + 32 &nbsp;|&nbsp; K = °C + 273.15
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════
+     SEC 2 · NIVELES DE ORGANIZACIÓN
+════════════════════════════════════ -->
+<section class="section observe" id="sec2">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Niveles de <span class="accent">Organización</span></h2>
+  </div>
+
+  <p style="color:var(--muted); margin-bottom:2rem;">La materia se organiza en niveles de complejidad creciente. Hacé clic en cada nivel para más info.</p>
+
+  <div class="pyramid-wrap">
+    <!-- cada nivel = color distinto, width crece de arriba a abajo -->
+    <div class="pyr-level" style="width:120px; background:#b794f4;" onclick="showPyr(0)">🌍 Biosfera</div>
+    <div class="pyr-level" style="width:170px; background:#9f7aea;" onclick="showPyr(1)">🌐 Ecosistema</div>
+    <div class="pyr-level" style="width:220px; background:#805ad5;" onclick="showPyr(2)">🦋 Comunidad</div>
+    <div class="pyr-level" style="width:270px; background:#6b46c1;" onclick="showPyr(3)">🐺 Población</div>
+    <div class="pyr-level" style="width:320px; background:#553c9a; color:#e9d8fd;" onclick="showPyr(4)">🐾 Organismo</div>
+    <div class="pyr-level" style="width:370px; background:#4c51bf; color:#c3dafe;" onclick="showPyr(5)">🫀 Aparato/Sistema</div>
+    <div class="pyr-level" style="width:420px; background:#434190; color:#c3dafe;" onclick="showPyr(6)">🫁 Órgano</div>
+    <div class="pyr-level" style="width:470px; background:#3c366b; color:#bee3f8;" onclick="showPyr(7)">🧬 Tejido</div>
+    <div class="pyr-level" style="width:520px; background:#2a4365; color:#bee3f8;" onclick="showPyr(8)">🔬 Célula</div>
+    <div class="pyr-level" style="width:570px; background:#2c5282; color:#bee3f8;" onclick="showPyr(9)">⚛️ Molécula</div>
+    <div class="pyr-level" style="width:620px; background:#2b6cb0; color:#bee3f8;" onclick="showPyr(10)">🔵 Átomo</div>
+    <div class="pyr-level" style="width:680px; background:#3182ce; color:#fff;" onclick="showPyr(11)">💫 Subatómico</div>
+  </div>
+
+  <div id="pyr-info" style="margin-top:1.5rem; display:none;">
+    <div class="card" style="max-width:600px; margin:0 auto; border-color:rgba(183,148,244,0.4); box-shadow:var(--glow-purple);">
+      <div id="pyr-title" style="color:var(--purple); font-weight:700; font-size:1.1rem; margin-bottom:0.5rem;"></div>
+      <div id="pyr-text" style="color:var(--muted); font-size:0.9rem;"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════
+     SEC 3 · BIOMOLÉCULAS
+════════════════════════════════════ -->
+<section class="section observe" id="sec3">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title"><span class="accent">Biomoléculas</span></h2>
+  </div>
+
+  <p style="color:var(--muted); margin-bottom:2rem;">Moléculas orgánicas basadas en esqueleto de <strong style="color:var(--cyan);">carbono</strong>. Seleccioná una categoría:</p>
+
+  <div class="biomol-tabs">
+    <button class="tab-btn active" onclick="showTab('carb')">🍞 Carbohidratos</button>
+    <button class="tab-btn" onclick="showTab('lip')">🧈 Lípidos</button>
+    <button class="tab-btn" onclick="showTab('prot')">🥩 Proteínas</button>
+    <button class="tab-btn" onclick="showTab('acid')">🧬 Ácidos Nucleicos</button>
+  </div>
+
+  <!-- CARBOHIDRATOS -->
+  <div id="tab-carb" class="tab-content active">
+    <div>
+      <h3 style="color:var(--orange); margin-bottom:1rem;">Carbohidratos</h3>
+      <p style="color:var(--muted); margin-bottom:1rem;">Fuente principal de energía y soporte estructural. Formados por C, H y O.</p>
+      <div class="accordion">
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">Monosacáridos <span class="chevron">▼</span></button>
+          <div class="acc-body">Unidad básica. No se pueden descomponer más. Ej: <strong>glucosa</strong> (energía celular), fructosa, galactosa. Fórmula general: (CH₂O)n.</div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">Disacáridos <span class="chevron">▼</span></button>
+          <div class="acc-body">Dos monosacáridos unidos. Ej: <strong>sacarosa</strong> (glucosa+fructosa), lactosa (glucosa+galactosa), maltosa (glucosa+glucosa).</div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">Polisacáridos <span class="chevron">▼</span></button>
+          <div class="acc-body"><strong>Almidón</strong> (reserva vegetal), <strong>glucógeno</strong> (reserva animal), <strong>celulosa</strong> (pared celular vegetal), <strong>quitina</strong> (exoesqueleto de insectos).</div>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <span class="pill pill-orange">C · H · O</span>
+        <span class="pill pill-orange">4 kcal/g</span>
+        <span class="pill pill-orange">Síntesis por deshidratación</span>
+        <span class="pill pill-orange">Hidrólisis para degradar</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:center;">
+      <!-- SVG monosacárido simplificado -->
+      <svg viewBox="0 0 200 220" width="200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="gc" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#f6ad5580"/>
+            <stop offset="100%" stop-color="#f6ad5510"/>
+          </radialGradient>
+        </defs>
+        <circle cx="100" cy="110" r="65" fill="url(#gc)" stroke="#f6ad55" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.6"/>
+        <!-- hexágono glucosa -->
+        <polygon points="100,40 158,73 158,147 100,180 42,147 42,73" fill="none" stroke="#f6ad55" stroke-width="2.5"/>
+        <text x="100" y="116" text-anchor="middle" fill="#f6ad55" font-family="Space Mono" font-size="13" font-weight="bold">C₆H₁₂O₆</text>
+        <text x="100" y="200" text-anchor="middle" fill="#a0aec0" font-family="DM Sans" font-size="11">Glucosa (monosacárido)</text>
+        <!-- vértices -->
+        <circle cx="100" cy="40" r="5" fill="#f6ad55"/>
+        <circle cx="158" cy="73" r="5" fill="#f6ad55"/>
+        <circle cx="158" cy="147" r="5" fill="#f6ad55"/>
+        <circle cx="100" cy="180" r="5" fill="#f6ad55"/>
+        <circle cx="42" cy="147" r="5" fill="#f6ad55"/>
+        <circle cx="42" cy="73" r="5" fill="#f6ad55"/>
+        <text x="100" y="36" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Space Mono">C</text>
+        <text x="162" y="71" fill="#a0aec0" font-size="9" font-family="Space Mono">C</text>
+        <text x="162" y="149" fill="#a0aec0" font-size="9" font-family="Space Mono">C</text>
+        <text x="103" y="195" text-anchor="middle" fill="#a0aec0" font-size="9" font-family="Space Mono">C</text>
+        <text x="24" y="149" fill="#a0aec0" font-size="9" font-family="Space Mono">C</text>
+        <text x="28" y="71" fill="#a0aec0" font-size="9" font-family="Space Mono">C</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- LÍPIDOS -->
+  <div id="tab-lip" class="tab-content">
+    <div>
+      <h3 style="color:var(--yellow); margin-bottom:1rem;">Lípidos</h3>
+      <p style="color:var(--muted); margin-bottom:1rem;">Moléculas <strong>hidrófobas</strong> (no se disuelven en agua). Rica fuente de energía: 9 kcal/g.</p>
+      <div class="accordion">
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">Grasas y Aceites <span class="chevron">▼</span></button>
+          <div class="acc-body">Triglicéridos: glicerol + 3 ácidos grasos. <strong>Grasas</strong> = saturadas (sólidas). <strong>Aceites</strong> = insaturadas (líquidas). Función: almacenamiento de energía.</div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">Fosfolípidos <span class="chevron">▼</span></button>
+          <div class="acc-body">Glicerol + 2 ácidos grasos + grupo fosfato. Forman la <strong>bicapa lipídica</strong> de las membranas celulares. Tienen cabeza hidrófila y cola hidrófoba.</div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">Esteroides <span class="chevron">▼</span></button>
+          <div class="acc-body"><strong>Colesterol</strong> (membranas), hormonas sexuales (testosterona, estrógeno), cortisol. Estructura de 4 anillos fusionados de carbono.</div>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <span class="pill pill-cyan">Hidrófobos</span>
+        <span class="pill pill-cyan">9 kcal/g</span>
+        <span class="pill pill-cyan">C · H · O (poco)</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:center;">
+      <!-- Fosfolípido SVG -->
+      <svg viewBox="0 0 160 220" width="160" xmlns="http://www.w3.org/2000/svg">
+        <text x="80" y="20" text-anchor="middle" fill="#a0aec0" font-family="DM Sans" font-size="10">Fosfolípido</text>
+        <!-- cabeza hidrofílica -->
+        <circle cx="80" cy="55" r="28" fill="rgba(246,224,94,0.2)" stroke="#f6e05e" stroke-width="2"/>
+        <text x="80" y="52" text-anchor="middle" fill="#f6e05e" font-size="9" font-family="Space Mono">PO₄²⁻</text>
+        <text x="80" y="65" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="DM Sans">Hidrófila</text>
+        <!-- colas hidrófobas -->
+        <line x1="65" y1="83" x2="65" y2="200" stroke="#f6ad55" stroke-width="3" stroke-linecap="round"/>
+        <line x1="95" y1="83" x2="95" y2="200" stroke="#f6ad55" stroke-width="3" stroke-linecap="round" stroke-dasharray="5 3"/>
+        <text x="50" y="150" fill="#a0aec0" font-size="8" font-family="DM Sans" transform="rotate(-90,50,150)">Hidrófoba</text>
+        <text x="80" y="215" text-anchor="middle" fill="#a0aec0" font-family="DM Sans" font-size="10">2 colas de ácidos grasos</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- PROTEÍNAS -->
+  <div id="tab-prot" class="tab-content">
+    <div>
+      <h3 style="color:var(--green); margin-bottom:1rem;">Proteínas</h3>
+      <p style="color:var(--muted); margin-bottom:1rem;">Polímeros de <strong>aminoácidos</strong> unidos por enlaces peptídicos. ¡Son las moléculas más versátiles!</p>
+      <div class="accordion">
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">Estructura Primaria <span class="chevron">▼</span></button>
+          <div class="acc-body">Secuencia lineal de aminoácidos. La <strong>información está en el ADN</strong>. Cada proteína tiene una secuencia única.</div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">Estructura Secundaria <span class="chevron">▼</span></button>
+          <div class="acc-body">Plegamiento local: <strong>alfa-hélice</strong> (espiral) y <strong>lámina beta</strong> (plegada). Estabilizada por puentes de hidrógeno.</div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">Estructuras Terciaria y Cuaternaria <span class="chevron">▼</span></button>
+          <div class="acc-body"><strong>Terciaria</strong>: forma 3D final de una cadena. <strong>Cuaternaria</strong>: unión de varias cadenas (ej: hemoglobina tiene 4 subunidades).</div>
+        </div>
+      </div>
+      <div style="margin-top:1rem; color:var(--muted); font-size:0.85rem;">
+        Funciones: estructural (colágeno), catálisis (enzimas), defensa (anticuerpos), transporte (hemoglobina), movimiento (actina/miosina).
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:center;">
+      <!-- Cadena polipeptídica SVG animada -->
+      <svg viewBox="0 0 200 200" width="200" xmlns="http://www.w3.org/2000/svg">
+        <text x="100" y="18" text-anchor="middle" fill="#a0aec0" font-family="DM Sans" font-size="10">Cadena Polipeptídica</text>
+        <path d="M30,100 C60,60 90,140 120,100 C150,60 170,120 180,95" fill="none" stroke="#68d391" stroke-width="3" stroke-linecap="round">
+          <animate attributeName="stroke-dashoffset" from="300" to="0" dur="2s" fill="freeze"/>
+          <animateTransform attributeName="transform" type="translate" values="0,0;0,-3;0,0" dur="3s" repeatCount="indefinite"/>
+        </path>
+        <!-- aminoácidos -->
+        <circle cx="30" cy="100" r="8" fill="rgba(104,211,145,0.3)" stroke="#68d391" stroke-width="1.5"/>
+        <circle cx="70" cy="72" r="8" fill="rgba(104,211,145,0.3)" stroke="#68d391" stroke-width="1.5"/>
+        <circle cx="110" cy="126" r="8" fill="rgba(104,211,145,0.3)" stroke="#68d391" stroke-width="1.5"/>
+        <circle cx="150" cy="78" r="8" fill="rgba(104,211,145,0.3)" stroke="#68d391" stroke-width="1.5"/>
+        <circle cx="180" cy="95" r="8" fill="rgba(104,211,145,0.3)" stroke="#68d391" stroke-width="1.5"/>
+        <text x="30" y="103" text-anchor="middle" fill="#68d391" font-size="6" font-family="Space Mono">AA</text>
+        <text x="70" y="75" text-anchor="middle" fill="#68d391" font-size="6" font-family="Space Mono">AA</text>
+        <text x="110" y="129" text-anchor="middle" fill="#68d391" font-size="6" font-family="Space Mono">AA</text>
+        <text x="150" y="81" text-anchor="middle" fill="#68d391" font-size="6" font-family="Space Mono">AA</text>
+        <text x="180" y="98" text-anchor="middle" fill="#68d391" font-size="6" font-family="Space Mono">AA</text>
+        <text x="100" y="180" text-anchor="middle" fill="#68d391" font-family="Space Mono" font-size="9">—CO—NH— (enlace peptídico)</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ÁCIDOS NUCLEICOS -->
+  <div id="tab-acid" class="tab-content">
+    <div>
+      <h3 style="color:var(--cyan); margin-bottom:1rem;">Ácidos Nucleicos</h3>
+      <p style="color:var(--muted); margin-bottom:1rem;">Formados por <strong>nucleótidos</strong> (base nitrogenada + azúcar + fosfato).</p>
+      <div class="accordion">
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">ADN <span class="chevron">▼</span></button>
+          <div class="acc-body"><strong>Ácido desoxirribonucleico</strong>. Doble hélice. Contiene la información genética. Bases: A, T, G, C. Azúcar: desoxirribosa.</div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">ARN <span class="chevron">▼</span></button>
+          <div class="acc-body"><strong>Ácido ribonucleico</strong>. Simple hebra. Dirige la síntesis de proteínas. Bases: A, U, G, C. Azúcar: ribosa. Tipos: ARNm, ARNt, ARNr.</div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">ATP <span class="chevron">▼</span></button>
+          <div class="acc-body"><strong>Adenosín trifosfato</strong>. Nucleótido especial. Es la "moneda energética" de la célula. Se produce en la mitocondria.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:center;">
+      <!-- Doble hélice SVG animada -->
+      <svg viewBox="0 0 120 220" width="120" xmlns="http://www.w3.org/2000/svg">
+        <text x="60" y="18" text-anchor="middle" fill="#a0aec0" font-family="DM Sans" font-size="9">Doble Hélice ADN</text>
+        <!-- hélice izq -->
+        <path d="M20,25 C60,45 60,65 20,85 C60,105 60,125 20,145 C60,165 60,185 20,205" fill="none" stroke="#63b3ed" stroke-width="2.5" stroke-linecap="round">
+          <animate attributeName="stroke-dasharray" values="0,500;500,0" dur="1.5s" fill="freeze"/>
+        </path>
+        <!-- hélice der -->
+        <path d="M100,25 C60,45 60,65 100,85 C60,105 60,125 100,145 C60,165 60,185 100,205" fill="none" stroke="#b794f4" stroke-width="2.5" stroke-linecap="round">
+          <animate attributeName="stroke-dasharray" values="0,500;500,0" dur="1.5s" fill="freeze"/>
+        </path>
+        <!-- puentes horizontales -->
+        <line x1="20" y1="55" x2="100" y2="55" stroke="#68d391" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.8"/>
+        <line x1="20" y1="85" x2="100" y2="85" stroke="#f6e05e" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.8"/>
+        <line x1="20" y1="115" x2="100" y2="115" stroke="#68d391" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.8"/>
+        <line x1="20" y1="145" x2="100" y2="145" stroke="#f6e05e" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.8"/>
+        <line x1="20" y1="175" x2="100" y2="175" stroke="#68d391" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.8"/>
+        <text x="60" y="218" text-anchor="middle" fill="#63b3ed" font-size="8" font-family="Space Mono">A-T / G-C</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════
+     SEC 4 · CÉLULA ANIMAL
+════════════════════════════════════ -->
+<section class="section observe" id="sec4">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Célula <span class="accent">Animal</span></h2>
+  </div>
+
+  <p style="color:var(--muted); margin-bottom:2rem;">Hacé clic en cada orgánulo para conocer su función.</p>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start;">
+    <!-- Diagrama SVG célula animal interactivo -->
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1rem;">
+      <svg id="cell-svg" viewBox="0 0 300 280" width="100%" xmlns="http://www.w3.org/2000/svg" style="cursor:pointer;">
+        <!-- membrana plasmática -->
+        <ellipse cx="150" cy="140" rx="140" ry="120" fill="rgba(99,179,237,0.05)" stroke="#63b3ed" stroke-width="2" stroke-dasharray="6 3" onclick="showOrg('membrana')"/>
+        <!-- citoplasma -->
+        <ellipse cx="150" cy="140" rx="130" ry="110" fill="rgba(104,211,145,0.03)"/>
+        <!-- núcleo -->
+        <ellipse cx="150" cy="140" rx="45" ry="40" fill="rgba(183,148,244,0.15)" stroke="#b794f4" stroke-width="2" onclick="showOrg('nucleo')" class="org-shape"/>
+        <text x="150" y="138" text-anchor="middle" fill="#b794f4" font-family="Space Mono" font-size="8">NÚCLEO</text>
+        <text x="150" y="150" text-anchor="middle" fill="#b794f4" font-family="Space Mono" font-size="6">ADN</text>
+        <!-- mitocondria -->
+        <ellipse cx="80" cy="90" rx="22" ry="13" fill="rgba(246,173,85,0.2)" stroke="#f6ad55" stroke-width="1.5" onclick="showOrg('mito')" class="org-shape"/>
+        <text x="80" y="93" text-anchor="middle" fill="#f6ad55" font-size="6" font-family="Space Mono">MITO.</text>
+        <!-- aparato de golgi -->
+        <g onclick="showOrg('golgi')" class="org-shape" style="cursor:pointer;">
+          <path d="M230,110 Q245,115 230,122 Q245,127 230,134 Q245,139 230,146" fill="none" stroke="#68d391" stroke-width="3" stroke-linecap="round"/>
+          <text x="238" y="130" fill="#68d391" font-size="6" font-family="Space Mono">GOLGI</text>
+        </g>
+        <!-- retículo endoplasmático -->
+        <path d="M105,160 Q115,150 125,165 Q135,178 145,165 Q155,152 165,165" fill="none" stroke="#fc8181" stroke-width="2" onclick="showOrg('reticulo')" class="org-shape"/>
+        <text x="135" y="185" text-anchor="middle" fill="#fc8181" font-size="5.5" font-family="Space Mono">R.E.</text>
+        <!-- ribosomas -->
+        <circle cx="200" cy="170" r="4" fill="#f6e05e" onclick="showOrg('ribo')" class="org-shape"/>
+        <circle cx="210" cy="180" r="4" fill="#f6e05e"/>
+        <circle cx="195" cy="185" r="4" fill="#f6e05e"/>
+        <text x="215" y="193" fill="#f6e05e" font-size="5.5" font-family="Space Mono">RIBO.</text>
+        <!-- vacuola -->
+        <ellipse cx="85" cy="175" rx="18" ry="13" fill="rgba(99,179,237,0.1)" stroke="#63b3ed" stroke-width="1.5" stroke-dasharray="3 2" onclick="showOrg('vacuola')" class="org-shape"/>
+        <text x="85" y="178" text-anchor="middle" fill="#63b3ed" font-size="5" font-family="Space Mono">VAC.</text>
+        <!-- centrosoma -->
+        <g onclick="showOrg('centro')" class="org-shape">
+          <circle cx="215" cy="80" r="10" fill="rgba(252,129,129,0.15)" stroke="#fc8181" stroke-width="1.5"/>
+          <text x="215" y="84" text-anchor="middle" fill="#fc8181" font-size="5" font-family="Space Mono">CENT.</text>
+        </g>
+        <!-- leyenda -->
+        <text x="150" y="268" text-anchor="middle" fill="#4a5568" font-size="8" font-family="DM Sans">← clic en orgánulos para más info →</text>
+      </svg>
+    </div>
+
+    <!-- Info panel orgánulos -->
+    <div>
+      <div id="org-info" class="card" style="border-color:rgba(183,148,244,0.35); min-height:180px;">
+        <div id="org-icon" style="font-size:2.5rem; margin-bottom:0.5rem;">🔬</div>
+        <div id="org-name" style="color:var(--purple); font-weight:700; font-size:1.1rem; margin-bottom:0.5rem;">Hacé clic en un orgánulo</div>
+        <div id="org-desc" style="color:var(--muted); font-size:0.9rem;">Seleccioná cualquier estructura del diagrama para ver su descripción y función.</div>
+      </div>
+
+      <div style="margin-top:1.5rem;">
+        <h4 style="color:var(--muted); font-size:0.8rem; font-family:'Space Mono',monospace; letter-spacing:0.1em; margin-bottom:0.75rem;">DIFERENCIAS CON CÉLULA VEGETAL</h4>
+        <div style="display:flex; flex-direction:column; gap:0.5rem;">
+          <div style="display:flex; gap:0.75rem; align-items:center; font-size:0.85rem;">
+            <span style="color:var(--pink);">✗</span>
+            <span><strong style="color:var(--pink);">Sin pared celular</strong> rígida de celulosa</span>
+          </div>
+          <div style="display:flex; gap:0.75rem; align-items:center; font-size:0.85rem;">
+            <span style="color:var(--pink);">✗</span>
+            <span><strong style="color:var(--pink);">Sin cloroplastos</strong> (no hace fotosíntesis)</span>
+          </div>
+          <div style="display:flex; gap:0.75rem; align-items:center; font-size:0.85rem;">
+            <span style="color:var(--green);">✓</span>
+            <span><strong style="color:var(--green);">Centrosomas</strong> (para división celular)</span>
+          </div>
+          <div style="display:flex; gap:0.75rem; align-items:center; font-size:0.85rem;">
+            <span style="color:var(--green);">✓</span>
+            <span>Es <strong style="color:var(--green);">heterótrofa</strong> — obtiene energía de fuentes externas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════
+     SEC 5 · SISTEMAS MATERIALES
+════════════════════════════════════ -->
+<section class="section observe" id="sec5">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Sistemas <span class="accent">Materiales</span></h2>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-bottom:2.5rem;">
+    <div class="card" style="text-align:center; border-color:rgba(99,179,237,0.35);">
+      <div style="font-size:2.5rem; margin-bottom:0.5rem;">🔓</div>
+      <h3>Abierto</h3>
+      <p>Intercambia <strong>materia</strong> y <strong>energía</strong> con el medio. Ej: una olla destapada hirviendo.</p>
+    </div>
+    <div class="card" style="text-align:center; border-color:rgba(183,148,244,0.35);">
+      <div style="font-size:2.5rem; margin-bottom:0.5rem;">🔒</div>
+      <h3 style="color:var(--purple);">Cerrado</h3>
+      <p>Intercambia solo <strong>energía</strong>. Ej: una olla tapada (el calor pasa, el vapor no).</p>
+    </div>
+    <div class="card" style="text-align:center; border-color:rgba(104,211,145,0.35);">
+      <div style="font-size:2.5rem; margin-bottom:0.5rem;">🚫</div>
+      <h3 style="color:var(--green);">Aislado</h3>
+      <p>No intercambia nada. Teórico. Ej: un termo ideal.</p>
+    </div>
+  </div>
+
+  <!-- Homogéneo vs Heterogéneo -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+    <div class="card" style="border-color:rgba(99,179,237,0.4);">
+      <h3 style="margin-bottom:1rem;">🧂 Sistema Homogéneo</h3>
+      <p style="color:var(--muted); font-size:0.9rem; margin-bottom:1rem;">Una sola <strong style="color:var(--cyan);">fase</strong>. Propiedades intensivas constantes en toda su masa. Incluye sustancias puras y <strong>soluciones</strong>.</p>
+      <!-- baso de agua con sal -->
+      <svg viewBox="0 0 120 100" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="20" width="80" height="65" rx="6" fill="rgba(99,179,237,0.12)" stroke="#63b3ed" stroke-width="1.5"/>
+        <!-- líquido uniforme -->
+        <rect x="22" y="40" width="76" height="43" rx="0 0 4 4" fill="rgba(99,179,237,0.2)"/>
+        <text x="60" y="66" text-anchor="middle" fill="#63b3ed" font-size="9" font-family="Space Mono">UNIFORME</text>
+        <text x="60" y="10" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="DM Sans">Solución salina</text>
+        <!-- puntos distribuidos -->
+        <circle cx="35" cy="55" r="2" fill="#63b3ed" opacity="0.6"/>
+        <circle cx="50" cy="62" r="2" fill="#63b3ed" opacity="0.6"/>
+        <circle cx="68" cy="50" r="2" fill="#63b3ed" opacity="0.6"/>
+        <circle cx="83" cy="68" r="2" fill="#63b3ed" opacity="0.6"/>
+        <circle cx="42" cy="72" r="2" fill="#63b3ed" opacity="0.6"/>
+        <circle cx="75" cy="57" r="2" fill="#63b3ed" opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="card" style="border-color:rgba(246,173,85,0.4);">
+      <h3 style="color:var(--orange); margin-bottom:1rem;">🥗 Sistema Heterogéneo</h3>
+      <p style="color:var(--muted); font-size:0.9rem; margin-bottom:1rem;">Dos o más <strong style="color:var(--orange);">fases</strong>. Diferentes propiedades en distintos puntos. Ej: aceite y agua.</p>
+      <svg viewBox="0 0 120 100" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="20" width="80" height="65" rx="6" fill="rgba(246,173,85,0.05)" stroke="#f6ad55" stroke-width="1.5"/>
+        <!-- capa superior (aceite) -->
+        <rect x="22" y="42" width="76" height="21" fill="rgba(246,173,85,0.25)"/>
+        <text x="60" y="57" text-anchor="middle" fill="#f6ad55" font-size="8" font-family="Space Mono">ACEITE</text>
+        <!-- capa inferior (agua) -->
+        <rect x="22" y="63" width="76" height="21" rx="0 0 4 4" fill="rgba(99,179,237,0.2)"/>
+        <text x="60" y="78" text-anchor="middle" fill="#63b3ed" font-size="8" font-family="Space Mono">AGUA</text>
+        <!-- línea de separación -->
+        <line x1="22" y1="63" x2="98" y2="63" stroke="#a0aec0" stroke-width="1" stroke-dasharray="3 2"/>
+        <text x="60" y="10" text-anchor="middle" fill="#a0aec0" font-size="8" font-family="DM Sans">2 fases visibles</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════
+     SEC 6 · ESTADOS DE LA MATERIA
+════════════════════════════════════ -->
+<section class="section observe" id="sec6">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title">Estados &amp; <span class="accent">Cambios</span></h2>
+  </div>
+
+  <div class="states-container">
+    <div class="state-buttons">
+      <button class="state-btn active" onclick="setState('solid')">
+        <span class="state-name">🟦 Sólido</span>
+        <span class="state-desc">Atracción > Repulsión · Forma y volumen propios</span>
+      </button>
+      <button class="state-btn" onclick="setState('liquid')">
+        <span class="state-name">💧 Líquido</span>
+        <span class="state-desc">Atracción ≈ Repulsión · Volumen propio, forma del recipiente</span>
+      </button>
+      <button class="state-btn" onclick="setState('gas')">
+        <span class="state-name">☁️ Gas</span>
+        <span class="state-desc">Repulsión > Atracción · Sin forma ni volumen propio</span>
+      </button>
+      <button class="state-btn" onclick="setState('plasma')">
+        <span class="state-name">⚡ Plasma</span>
+        <span class="state-desc">4.° estado · Partículas ionizadas · Estrellas, relámpagos</span>
+      </button>
+    </div>
+    <div id="state-canvas-wrap">
+      <canvas id="state-canvas" width="300" height="300"></canvas>
+    </div>
+  </div>
+
+  <!-- Diagrama de cambios de estado -->
+  <div class="phase-diagram" style="margin-top:3rem;">
+    <h3 style="font-family:'Space Mono',monospace; font-size:0.8rem; color:var(--muted); letter-spacing:0.1em; margin-bottom:1.5rem;">// DIAGRAMA DE CAMBIOS DE ESTADO</h3>
+    <svg viewBox="0 0 600 180" width="100%" xmlns="http://www.w3.org/2000/svg">
+      <!-- estados -->
+      <rect x="10" y="70" width="100" height="50" rx="8" fill="rgba(99,179,237,0.15)" stroke="#63b3ed" stroke-width="1.5"/>
+      <text x="60" y="100" text-anchor="middle" fill="#63b3ed" font-family="Space Mono" font-size="12" font-weight="bold">SÓLIDO</text>
+
+      <rect x="250" y="70" width="100" height="50" rx="8" fill="rgba(104,211,145,0.15)" stroke="#68d391" stroke-width="1.5"/>
+      <text x="300" y="100" text-anchor="middle" fill="#68d391" font-family="Space Mono" font-size="12" font-weight="bold">LÍQUIDO</text>
+
+      <rect x="490" y="70" width="100" height="50" rx="8" fill="rgba(246,173,85,0.15)" stroke="#f6ad55" stroke-width="1.5"/>
+      <text x="540" y="100" text-anchor="middle" fill="#f6ad55" font-family="Space Mono" font-size="12" font-weight="bold">GAS</text>
+
+      <!-- flechas superior: fusión y vaporización -->
+      <defs>
+        <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#68d391"/>
+        </marker>
+        <marker id="ar2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#63b3ed"/>
+        </marker>
+        <marker id="ar3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#b794f4"/>
+        </marker>
+      </defs>
+
+      <!-- Sólido → Líquido: FUSIÓN -->
+      <line x1="115" y1="82" x2="245" y2="82" stroke="#68d391" stroke-width="1.5" marker-end="url(#ar)"/>
+      <text x="180" y="74" text-anchor="middle" fill="#68d391" font-size="9" font-family="DM Sans">FUSIÓN →</text>
+
+      <!-- Líquido → Sólido: SOLIDIFICACIÓN -->
+      <line x1="245" y1="108" x2="115" y2="108" stroke="#63b3ed" stroke-width="1.5" marker-end="url(#ar2)"/>
+      <text x="180" y="125" text-anchor="middle" fill="#63b3ed" font-size="9" font-family="DM Sans">← SOLIDIFICACIÓN</text>
+
+      <!-- Líquido → Gas: VAPORIZACIÓN -->
+      <line x1="355" y1="82" x2="485" y2="82" stroke="#f6ad55" stroke-width="1.5" marker-end="url(#ar3)"/>
+      <text x="420" y="74" text-anchor="middle" fill="#f6ad55" font-size="9" font-family="DM Sans">VAPORIZACIÓN →</text>
+
+      <!-- Gas → Líquido: CONDENSACIÓN -->
+      <line x1="485" y1="108" x2="355" y2="108" stroke="#63b3ed" stroke-width="1.5" marker-end="url(#ar2)"/>
+      <text x="420" y="125" text-anchor="middle" fill="#63b3ed" font-size="9" font-family="DM Sans">← CONDENSACIÓN</text>
+
+      <!-- Sólido → Gas: SUBLIMACIÓN -->
+      <path d="M60,68 Q300,10 540,68" fill="none" stroke="#b794f4" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ar3)"/>
+      <text x="300" y="20" text-anchor="middle" fill="#b794f4" font-size="9" font-family="DM Sans">SUBLIMACIÓN →</text>
+
+      <!-- Gas → Sólido: VOLATILIZACIÓN inversa -->
+      <path d="M540,155 Q300,170 60,155" fill="none" stroke="#b794f4" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#ar3)" opacity="0.5"/>
+      <text x="300" y="178" text-anchor="middle" fill="#b794f4" font-size="8" font-family="DM Sans" opacity="0.5">← SOLIDIFICACIÓN DIRECTA (gas→sólido)</text>
+    </svg>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════
+     SEC 7 · MÉTODOS DE SEPARACIÓN
+════════════════════════════════════ -->
+<section class="section observe" id="sec7">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2 class="section-title">Métodos de <span class="accent">Separación</span></h2>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:3rem;">
+    <div>
+      <h3 style="font-family:'Space Mono',monospace; font-size:0.75rem; color:var(--orange); letter-spacing:0.12em; margin-bottom:1.5rem;">// SISTEMAS HETEROGÉNEOS</h3>
+      <div class="sep-flow">
+
+        <div class="sep-item">
+          <div>
+            <div class="sep-label">Decantación</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.25rem;">Gravedad separa fases</div>
+          </div>
+          <div class="sep-vis">
+            <svg viewBox="0 0 200 40" width="100%" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="2" width="80" height="36" rx="4" fill="rgba(246,173,85,0.08)" stroke="#f6ad55" stroke-width="1"/>
+              <rect x="10" y="22" width="80" height="16" fill="rgba(99,179,237,0.2)" rx="0 0 3 3"/>
+              <rect x="10" y="10" width="80" height="12" fill="rgba(246,173,85,0.2)"/>
+              <line x1="10" y1="22" x2="90" y2="22" stroke="#a0aec0" stroke-width="0.8" stroke-dasharray="3,2"/>
+              <text x="50" y="17" text-anchor="middle" fill="#f6ad55" font-size="7" font-family="Space Mono">aceite</text>
+              <text x="50" y="34" text-anchor="middle" fill="#63b3ed" font-size="7" font-family="Space Mono">agua</text>
+              <text x="110" y="22" fill="#68d391" font-size="9" font-family="Space Mono">→ separadas</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="sep-item">
+          <div>
+            <div class="sep-label">Filtración</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.25rem;">Filtro retiene sólidos</div>
+          </div>
+          <div class="sep-vis">
+            <svg viewBox="0 0 200 40" width="100%" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20,5 L70,5 L50,30 Z" fill="rgba(104,211,145,0.1)" stroke="#68d391" stroke-width="1"/>
+              <line x1="20" y1="5" x2="70" y2="5" stroke="#68d391" stroke-width="2"/>
+              <circle cx="38" cy="18" r="3" fill="#f6ad55"/>
+              <circle cx="55" cy="14" r="2" fill="#f6ad55"/>
+              <line x1="50" y1="30" x2="50" y2="38" stroke="#63b3ed" stroke-width="1.5"/>
+              <circle cx="50" cy="39" r="2" fill="#63b3ed"/>
+              <text x="85" y="20" fill="#a0aec0" font-size="8" font-family="DM Sans">Sólido retenido</text>
+              <text x="85" y="33" fill="#63b3ed" font-size="8" font-family="DM Sans">Líquido filtra</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="sep-item">
+          <div>
+            <div class="sep-label">Centrifugación</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.25rem;">Fuerza centrífuga acelerada</div>
+          </div>
+          <div class="sep-vis">
+            <svg viewBox="0 0 200 40" width="100%" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="45" cy="20" r="17" fill="none" stroke="#b794f4" stroke-width="1.5"/>
+              <circle cx="45" cy="20" r="4" fill="#b794f4" opacity="0.5"/>
+              <line x1="45" y1="20" x2="62" y2="10" stroke="#b794f4" stroke-width="1" stroke-dasharray="2,1"/>
+              <text x="45" y="24" text-anchor="middle" fill="#b794f4" font-size="6" font-family="Space Mono">⟳</text>
+              <rect x="90" y="8" width="30" height="24" rx="3" fill="rgba(183,148,244,0.1)" stroke="#b794f4" stroke-width="1"/>
+              <rect x="90" y="24" width="30" height="8" rx="0 0 2 2" fill="rgba(246,173,85,0.4)"/>
+              <text x="105" y="16" text-anchor="middle" fill="#a0aec0" font-size="6" font-family="Space Mono">sup.</text>
+              <text x="105" y="31" text-anchor="middle" fill="#f6ad55" font-size="6" font-family="Space Mono">pellet</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="sep-item">
+          <div>
+            <div class="sep-label">Magnetismo</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.25rem;">Atrae componente magnético</div>
+          </div>
+          <div class="sep-vis">
+            <svg viewBox="0 0 200 40" width="100%" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="12" width="50" height="16" rx="4" fill="rgba(252,129,129,0.15)" stroke="#fc8181" stroke-width="1.5"/>
+              <text x="35" y="24" text-anchor="middle" fill="#fc8181" font-size="9" font-family="Space Mono">🧲 N S</text>
+              <circle cx="85" cy="20" r="3" fill="#a0aec0"/>
+              <circle cx="95" cy="15" r="3" fill="#fc8181"/>
+              <circle cx="100" cy="25" r="3" fill="#a0aec0"/>
+              <circle cx="110" cy="20" r="3" fill="#fc8181"/>
+              <line x1="95" y1="15" x2="62" y2="18" stroke="#fc8181" stroke-width="1" stroke-dasharray="2,1"/>
+              <line x1="110" y1="20" x2="62" y2="20" stroke="#fc8181" stroke-width="1" stroke-dasharray="2,1"/>
+              <text x="135" y="22" fill="#a0aec0" font-size="8" font-family="DM Sans">Fe atraído</text>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div>
+      <h3 style="font-family:'Space Mono',monospace; font-size:0.75rem; color:var(--cyan); letter-spacing:0.12em; margin-bottom:1.5rem;">// SISTEMAS HOMOGÉNEOS</h3>
+      <div class="sep-flow">
+
+        <div class="sep-item" style="border-color:rgba(99,179,237,0.2);">
+          <div>
+            <div class="sep-label" style="color:var(--cyan);">Destilación</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.25rem;">Distintos puntos de ebullición</div>
+          </div>
+          <div class="sep-vis">
+            <svg viewBox="0 0 200 40" width="100%" xmlns="http://www.w3.org/2000/svg">
+              <!-- matraz -->
+              <ellipse cx="30" cy="28" rx="18" ry="10" fill="rgba(99,179,237,0.15)" stroke="#63b3ed" stroke-width="1"/>
+              <rect x="26" y="10" width="8" height="18" fill="rgba(99,179,237,0.1)" stroke="#63b3ed" stroke-width="1"/>
+              <!-- calor -->
+              <text x="30" y="40" text-anchor="middle" fill="#f6ad55" font-size="9">🔥</text>
+              <!-- flecha vapor -->
+              <line x1="34" y1="10" x2="80" y2="10" stroke="#a0aec0" stroke-width="1" marker-end="url(#ar)"/>
+              <!-- condensador -->
+              <rect x="80" y="5" width="40" height="10" rx="3" fill="rgba(99,179,237,0.1)" stroke="#63b3ed" stroke-width="1"/>
+              <text x="100" y="13" text-anchor="middle" fill="#63b3ed" font-size="6" font-family="Space Mono">≈≈≈</text>
+              <!-- recolección -->
+              <line x1="120" y1="10" x2="150" y2="28" stroke="#63b3ed" stroke-width="1"/>
+              <circle cx="155" cy="30" r="6" fill="rgba(99,179,237,0.2)" stroke="#63b3ed" stroke-width="1"/>
+              <text x="175" y="33" fill="#63b3ed" font-size="7" font-family="Space Mono">puro</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="sep-item" style="border-color:rgba(99,179,237,0.2);">
+          <div>
+            <div class="sep-label" style="color:var(--cyan);">Cristalización</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.25rem;">Evaporar solvente → cristales</div>
+          </div>
+          <div class="sep-vis">
+            <svg viewBox="0 0 200 40" width="100%" xmlns="http://www.w3.org/2000/svg">
+              <text x="20" y="25" fill="#63b3ed" font-size="18" font-family="Space Mono">◇</text>
+              <text x="50" y="20" fill="#63b3ed" font-size="14" font-family="Space Mono">◇</text>
+              <text x="75" y="28" fill="#63b3ed" font-size="10" font-family="Space Mono">◇</text>
+              <text x="100" y="22" fill="#a0aec0" font-size="8" font-family="DM Sans">→ cristales del</text>
+              <text x="100" y="34" fill="#a0aec0" font-size="8" font-family="DM Sans">soluto separados</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="sep-item" style="border-color:rgba(99,179,237,0.2);">
+          <div>
+            <div class="sep-label" style="color:var(--cyan);">Extracción</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:0.25rem;">Solvente específico</div>
+          </div>
+          <div class="sep-vis">
+            <svg viewBox="0 0 200 40" width="100%" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="5" width="50" height="30" rx="4" fill="rgba(183,148,244,0.1)" stroke="#b794f4" stroke-width="1"/>
+              <text x="35" y="24" text-anchor="middle" fill="#b794f4" font-size="7" font-family="Space Mono">mezcla</text>
+              <text x="70" y="23" fill="#a0aec0" font-size="12">+</text>
+              <rect x="85" y="5" width="40" height="30" rx="4" fill="rgba(104,211,145,0.1)" stroke="#68d391" stroke-width="1"/>
+              <text x="105" y="24" text-anchor="middle" fill="#68d391" font-size="7" font-family="Space Mono">solv.</text>
+              <text x="135" y="23" fill="#a0aec0" font-size="12">→</text>
+              <rect x="155" y="5" width="35" height="30" rx="4" fill="rgba(104,211,145,0.15)" stroke="#68d391" stroke-width="1.5"/>
+              <text x="172" y="24" text-anchor="middle" fill="#68d391" font-size="7" font-family="Space Mono">puro</text>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="position:relative;z-index:1;border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--muted);font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.08em;">
+  GUÍA DE QUÍMICA · MATERIA &amp; VIDA · ⚗ ORON_8
+</footer>
+
+<!-- ════════ SCRIPTS ════════ -->
+<script>
+/* ─── Densidad ─── */
+function calcDensidad() {
+  const m = parseFloat(document.getElementById('masa').value);
+  const v = parseFloat(document.getElementById('vol').value);
+  const r = document.getElementById('dens-result');
+  if (!isNaN(m) && !isNaN(v) && v !== 0) {
+    r.textContent = (m / v).toFixed(4) + ' g/cm³';
+  } else {
+    r.textContent = '— g/cm³';
+  }
+}
+
+/* ─── Temperatura ─── */
+function convertTemp(src) {
+  const c = document.getElementById('temp-c');
+  const f = document.getElementById('temp-f');
+  const k = document.getElementById('temp-k');
+  let val = parseFloat(src === 'c' ? c.value : src === 'f' ? f.value : k.value);
+  if (isNaN(val)) { c.value = f.value = k.value = ''; return; }
+  let celsius;
+  if (src === 'c') celsius = val;
+  else if (src === 'f') celsius = (val - 32) * 5/9;
+  else celsius = val - 273.15;
+  if (src !== 'c') c.value = celsius.toFixed(2);
+  if (src !== 'f') f.value = (celsius * 9/5 + 32).toFixed(2);
+  if (src !== 'k') k.value = (celsius + 273.15).toFixed(2);
+}
+
+/* ─── Pirámide ─── */
+const pyrData = [
+  ['🌍 Biosfera', 'Toda la superficie terrestre habitada por seres vivos. Es el nivel más abarcador de la organización ecológica.'],
+  ['🌐 Ecosistema', 'Comunidad de organismos más su entorno físico (factores abióticos: agua, luz, suelo, temperatura).'],
+  ['🦋 Comunidad', 'Conjunto de poblaciones de distintas especies que conviven e interactúan en un mismo lugar.'],
+  ['🐺 Población', 'Grupo de organismos de la misma especie que habitan una misma área geográfica.'],
+  ['🐾 Organismo', 'Un ser vivo completo e individual, como un perro, una planta o una bacteria.'],
+  ['🫀 Aparato/Sistema', 'Grupo de órganos que trabajan coordinados para cumplir una función (ej: sistema circulatorio).'],
+  ['🫁 Órgano', 'Unión de tejidos con función específica. Ej: corazón, pulmones, estómago.'],
+  ['🧬 Tejido', 'Agrupación de células similares con función común. Ej: tejido muscular, epitelial.'],
+  ['🔬 Célula', 'Unidad mínima de la vida. Puede ser procariota (sin núcleo) o eucariota (con núcleo).'],
+  ['⚛️ Molécula', 'Combinación de átomos. Pueden ser simples (O₂) o complejas (proteínas, ADN).'],
+  ['🔵 Átomo', 'Partícula más pequeña de un elemento que conserva sus propiedades químicas.'],
+  ['💫 Subatómico', 'Protones (carga +), neutrones (neutros) en el núcleo; electrones (carga -) en la nube electrónica.'],
+];
+
+function showPyr(idx) {
+  const box = document.getElementById('pyr-info');
+  box.style.display = 'block';
+  document.getElementById('pyr-title').textContent = pyrData[idx][0];
+  document.getElementById('pyr-text').textContent = pyrData[idx][1];
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* ─── Tabs biomoléculas ─── */
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+/* ─── Accordion ─── */
+function toggleAcc(btn) {
+  const body = btn.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  // close all in same parent
+  btn.closest('.accordion').querySelectorAll('.acc-body').forEach(b => b.classList.remove('open'));
+  btn.closest('.accordion').querySelectorAll('.acc-header').forEach(b => b.classList.remove('open'));
+  if (!isOpen) {
+    body.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+
+/* ─── Orgánulos célula ─── */
+const orgs = {
+  membrana: ['🔵', 'Membrana Plasmática', 'Bicapa lipídica que rodea y protege la célula. Controla el ingreso y salida de sustancias (permeabilidad selectiva). Formada por fosfolípidos y proteínas.'],
+  nucleo: ['🔮', 'Núcleo', 'Centro de control de la célula. Contiene el ADN envuelto en la envoltura nuclear. Dirige la síntesis de proteínas y la reproducción celular.'],
+  mito: ['⚡', 'Mitocondria', '"Usina de la célula". Produce ATP (energía) mediante la respiración celular aeróbica. Tiene doble membrana y su propio ADN (evidencia de endosimbiosis).'],
+  golgi: ['📦', 'Aparato de Golgi', 'Procesa, empaqueta y distribuye proteínas y lípidos. Funciona como el "correo postal" de la célula.'],
+  reticulo: ['🌐', 'Retículo Endoplasmático', 'Sistema de membranas interno. El rugoso (con ribosomas) sintetiza proteínas; el liso metaboliza lípidos y desintoxica.'],
+  ribo: ['🟡', 'Ribosomas', 'Sitio de síntesis de proteínas. Traducen el ARNm en cadenas de aminoácidos. Pueden estar libres o en el RE rugoso.'],
+  vacuola: ['💠', 'Vacuola', 'Vesícula de almacenamiento. En animales son pequeñas; en vegetales son grandes y dan turgencia. Almacena agua, nutrientes y desechos.'],
+  centro: ['🔴', 'Centrosoma', 'Organiza los microtúbulos y es clave en la división celular (forma el huso mitótico). Exclusivo de células animales.'],
+};
+
+function showOrg(id) {
+  const d = orgs[id];
+  if (!d) return;
+  document.getElementById('org-icon').textContent = d[0];
+  document.getElementById('org-name').textContent = d[1];
+  document.getElementById('org-desc').textContent = d[2];
+  const card = document.getElementById('org-info');
+  card.style.animation = 'none';
+  requestAnimationFrame(() => { card.style.animation = 'pulse-glow 0.4s ease'; });
+}
+
+/* ─── Canvas partículas estados ─── */
+const canvas = document.getElementById('state-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let animId;
+let currentState = 'solid';
+
+const stateConfig = {
+  solid: { count: 36, speed: 0.3, spread: 0, color: '#63b3ed', size: 7, label: 'Sólido: partículas en red cristalina' },
+  liquid: { count: 30, speed: 1.5, spread: 15, color: '#68d391', size: 6, label: 'Líquido: flujo libre pero compacto' },
+  gas: { count: 20, speed: 4, spread: 80, color: '#f6ad55', size: 5, label: 'Gas: partículas rápidas y dispersas' },
+  plasma: { count: 25, speed: 7, spread: 100, color: '#fc8181', size: 4, label: 'Plasma: partículas ionizadas caóticas' },
+};
+
+function initParticles(state) {
+  particles = [];
+  const cfg = stateConfig[state];
+  const W = canvas.width, H = canvas.height;
+
+  if (state === 'solid') {
+    // grid
+    const cols = 6, rows = 6;
+    const ox = W/2 - cols*22/2, oy = H/2 - rows*22/2;
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      particles.push({ x: ox + c*22, y: oy + r*22, vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3, baseX: ox+c*22, baseY: oy+r*22 });
+    }
+  } else {
+    for (let i = 0; i < cfg.count; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      const spd = cfg.speed * (0.5 + Math.random());
+      particles.push({ x: W/2 + (Math.random()-0.5)*cfg.spread, y: H/2 + (Math.random()-0.5)*cfg.spread, vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd });
+    }
+  }
+}
+
+function drawParticles() {
+  const cfg = stateConfig[currentState];
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // background
+  ctx.fillStyle = '#111827';
+  ctx.fillRect(0, 0, W, H);
+
+  particles.forEach(p => {
+    if (currentState === 'solid') {
+      p.x += p.vx; p.y += p.vy;
+      // spring back
+      p.vx += (p.baseX - p.x) * 0.05;
+      p.vy += (p.baseY - p.y) * 0.05;
+      p.vx *= 0.9; p.vy *= 0.9;
+    } else {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 10 || p.x > W-10) p.vx *= -1;
+      if (p.y < 10 || p.y > H-10) p.vy *= -1;
+    }
+
+    // glow
+    const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, cfg.size * 2.5);
+    grd.addColorStop(0, cfg.color + 'cc');
+    grd.addColorStop(1, cfg.color + '00');
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, cfg.size * 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = grd;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, cfg.size, 0, Math.PI * 2);
+    ctx.fillStyle = cfg.color;
+    ctx.fill();
+  });
+
+  // label
+  ctx.fillStyle = 'rgba(160,174,192,0.7)';
+  ctx.font = '10px Space Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(cfg.label, W/2, H - 12);
+
+  animId = requestAnimationFrame(drawParticles);
+}
+
+function setState(state) {
+  currentState = state;
+  document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  cancelAnimationFrame(animId);
+  initParticles(state);
+  drawParticles();
+}
+
+// init
+initParticles('solid');
+drawParticles();
+
+/* ─── Intersection Observer (fade in) ─── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.observe').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
